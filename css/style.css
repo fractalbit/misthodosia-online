@@ -1,0 +1,72 @@
+a, a:link, a:visited {
+	color: #294684;
+}
+
+.container {
+  width: 960px;
+  margin: 30px auto;
+}
+
+label {
+	display: inline-block;
+	width: 100px;
+	text-align: right;
+	margin: 20px 5px;
+}
+
+#ops_submit {
+	width: 285px;
+}
+
+a:active, input.button:active { outline: 0; position: relative; top: 1px; }
+
+a.button, a:visited.button {
+	display: inline-block;
+	background: #336699;
+	background-image: -moz-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+	background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+	background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+	background-image: linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));		
+	-moz-border-radius: 6px; 
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+	color: #fff;
+	border: none;
+	padding: 8px 16px;
+	cursor: pointer;
+	text-decoration: none;
+	text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.15);
+	width: auto;
+	overflow: visible;
+	-moz-box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2), 1px 1px 3px rgba(0, 0, 0, 0.2) inset;
+	-webkit-box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2), 1px 1px 3px rgba(0, 0, 0, 0.2) inset;
+	box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2), 1px 1px 3px rgba(0, 0, 0, 0.2) inset;
+	-webkit-appearance: none;
+
+	font-weight:bold;
+	font-size: 13px;
+}
+a.button:hover { 
+	background: #09f; 
+	color: #fff; 
+}
+
+
+a.download {
+	background-image: url(../img/icon_set_bg.png);
+	background-repeat: no-repeat;
+	background-position: 10px 8px;
+	padding-left: 40px;
+}
+
+a.download:hover {
+	background-image: url(../img/icon_set_bg.png);
+	background-repeat: no-repeat;
+	background-position: 10px 8px;
+	padding-left: 40px;
+}
+
+.subtle, .subtle a {
+	color: #666;
+	font-size: 11px;
+}
