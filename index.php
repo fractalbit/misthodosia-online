@@ -164,7 +164,7 @@ function get_html($key, $user){
 	<h4>Περίοδος Μισθοδοσίας: '.$user['month_str'] . ' ' . $user['year'] .'</h4>';
 	$kratiseis = $akatharistes = 0;
 	foreach ($analysis as $income_type => $income) {
-		echo '<hr />Τύπος Μισθοδοσίας: '. $income_type . '<hr />';	
+		echo '<br /><br />Τύπος Μισθοδοσίας: '. get_type($income_type) . '<br />';	
 
 		echo '<table cellpadding="0" cellspacintg="0" width="100%" >
 		<tr><td valign="top" style="width: 310px; vertical-align: top;">	
@@ -195,6 +195,7 @@ function get_html($key, $user){
 					//dump($children);
 				}
 				echo '<tr><td style="width: 190px;">'. get_code($label, $codes, $income) . $children .'</td><td style="width: 110px;">' . sprintf('%01.2f €', $data['amount']) . '</td></tr>';			
+				$children = '';
 				$akatharistes += $data['amount'];	
 			}
 		}
@@ -228,6 +229,19 @@ function get_html($key, $user){
 	ob_end_clean();	
 
 	return $html;
+}
+
+
+function get_type($income_type){
+	if($income_type == '0'){
+		$type = 'Τακτική';
+	}elseif($income_type == '1'){
+		$type = 'Αναδρομική';
+	}else{
+		$type = $income_type;
+	}
+
+	return $type;
 }
 
 function get_children($amount){
