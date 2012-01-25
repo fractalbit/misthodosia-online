@@ -31,8 +31,8 @@ Aπαιτείται Apache web server με υποστήριξη PHP 5. Η εφα
     επιλέξτε overwrite (αντικατάσταση του υπάρχοντος).
 
 \* Ενδεικτικά… Για FTP πρόγραμμα πρόγραμμα προτείνω το [filezilla](http://filezilla-project.org/) και
-για text-editor πάρα πολύ καλά είναι τα [notepad++][] και [sublime text
-2][]
+για text-editor πάρα πολύ καλά είναι τα [notepad++](http://notepad-plus-plus.org/) και [sublime text
+2](http://www.sublimetext.com/2)
 
 ### Πριν τη χρήση
 
