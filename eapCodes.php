@@ -60,6 +60,7 @@ $codes = array 	(
 					'0213'	  => array('desc' => 'Οικογενειακή παροχή', 'kratisi' => 0, amount => 0),
 					'0232'	  => array('desc' => 'Επίδομα Εξωδιδακτικής', 'kratisi' => 0, amount => 0),
 					'0228'	  => array('desc' => 'Επίδομα Περιοχής', 'kratisi' => 0, amount => 0),
+					'0229'	  => array('desc' => 'Επ. Διδ. Προετοιμασίας', 'kratisi' => 0, amount => 0),
 					'0344'	  => array('desc' => 'Ακαθάριστες αποδοχές', 'kratisi' => 0, amount => 0),
 
 					// Κωδικοί για πρόσθετες αποδοχές

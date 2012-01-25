@@ -62,7 +62,7 @@ print_footer();
 
 function xml_extract($file){
 // Διαβάζει το αρχείο $file και τα οργανώνει ανα ΑΦΜ (μισθοδοτούμενο) στον πίνακα $dataset (global)
-	global $changed_afm, $codes, $dataset, $months;
+	global $changed_afm, $pliromes, $codes, $dataset, $months, $first, $second;
 	
 	$xmlstr = file_get_contents($file);
 	$xml = new SimpleXMLElement($xmlstr); // Διαβάζει το xml αρχείο σε μορφή αντικειμένου (συνάρτηση ενσωματωμένη στην PHP).
@@ -94,6 +94,8 @@ function xml_extract($file){
 
 	foreach($xml->body->organizations->organization->employees->employee as $employee){
 	// Για κάθε εργαζόμενο που υπάρχει στο .xml...
+		
+		$pliromes = array();
 
 		$afm = ''.$employee->identification->tin;
 		$amm = ''.$employee->identification->amm;
@@ -120,82 +122,27 @@ function xml_extract($file){
 		$anadromika = 0;	
 		$days = '';
 		$first = $second = 0;
-		$temp_codes = $codes;
-		
+	
 		foreach($employee->payment as $payment){
 			// Για κάθε καταχώρηση πληρωμής του εργαζόμενου
 
-			if($payment->income['type'] == '0'){ 
-				// Αν πρόκειται για τακτική μισθοδοσία...
+			foreach ($payment->income as $income) {
+				$income_type = (string) $income['type'];	
 				
-				$income = $payment->income;
+				if(count($pliromes[$income_type]) == 0){
+					$pliromes[$income_type] = $codes;				
+				}	
 				
-				foreach($income->de as $de){
-					// Αποθήκευσε αθροιστικά, το ποσό για κάθε κωδικό κράτησης
-					$code = '';
-					$code = (string) trim($de['code']);				
+				analyze_data($income, $income_type);
+			}
 
-					if(array_key_exists($code, $temp_codes)){							
-						$temp_codes[$code]['amount'] += (float) trim($de['amount']);
-					}else {
-						$amount = (float) trim($de['amount']);
-						$temp_codes[$code] = array('desc' => $code, 'kratisi' => 1, 'amount' => $amount);
-					} 
-				}				
-
-				foreach($income->gr as $gr){
-					// Αποθήκευσε αθροιστικά, το ποσό για κάθε κωδικό επιδόματος
-					$code = '';
-					$code = (string) trim($gr['kae']);	
-					
-					if(array_key_exists($code, $temp_codes)){
-						$temp_codes[$code]['amount'] += (float) trim($gr['amount']);
-					}else {		
-						$amount = (float) trim($gr['amount']);
-						$temp_codes[$code] = array('desc' => $code, 'kratisi' => 0, 'amount' => $amount);
-					} 
-					
-				}			
-
-				foreach($income->et as $et){
-					$code = '';
-					$code = (string) trim($et['kae']);	
-					
-					if(array_key_exists($code, $temp_codes)){
-						$temp_codes[$code]['amount'] += (float) trim($et['amount']);						
-					}else {							
-						//$temp_codes['gen_epid'] += (float) trim($de['amount']);
-					} 
-					
-				}
-
-				// Αποθήκευσε το ποσό που θα πιστωθεί για το πρώτο και δεύτερο δεκαπενθήμερο
-				$first += (float) trim($payment->netAmount1['value']);
-				$second += (float) trim($payment->netAmount2['value']);
-			}else{	
-			// Αν πρόκειται για αναδρομική μισθοδοσία...
-				$code = '';
-				$code = (string) trim($payment->income->gr['kae']);									
-				$temp_codes['andr']['total']['amount'] += (float) trim($payment->netAmount1['value']);
-				
-							
-				$temp_codes['andr'][$code]['amount'] += (float) trim($payment->netAmount1['value']);
-
-				$endDate = $payment->income['endDate'];
-				$startDate = $payment->income['startDate'];				
-				$days = days_diff($endDate, $startDate); // Λεκτική περιγραφή διάρκειας αναδρομικών				
-
-				$temp_codes['andr'][$code]['days'] .= ' και ' . $days;
-				
-			} // Τέλος "ΑΝ τακτική... αλλιώς..."
-
+			$first += (float) trim($payment->netAmount1['value']);
+			$second += (float) trim($payment->netAmount2['value']);	
+						
 			$a++;			
 		
 		} // ΤΕΛΟΣ "Για κάθε πληρωμή του μισθοδοτούμενου"
 		
-		// Αν υπάρχουν αναδρομικά, πρόσθεσέ τα στο πρώτο δεκαπενθήμερο
-		if($temp_codes['andr']['total']['amount'] > 0) $first += $temp_codes['andr']['total']['amount'];
-
 		if($update){
 			// Ανανέωσε τα προσωπικά δεδομένα μόνο αν είναι νεότερα (βλέπε τον ορισμό της $update)
 			$dataset[$afm]['personal_info'] = array(
@@ -216,8 +163,10 @@ function xml_extract($file){
 												'firsthalf' => $first, // Α δεκαπενθήμερο
 												'secondhalf' => $second, // Β δεκαπενθήμερο
 												'days' => $days, // Λεκτική περιγραφή αναδρομικών				
-												'analysis' => $temp_codes // Αναλυτικά οι κρατήσεις και τα επιδόματα
+												'analysis' => $pliromes // Αναλυτικά οι κρατήσεις και τα επιδόματα
 											);
+
+		// dump($dataset[$afm][$period_str]); die();
 		
 	 } // Τέλος "Για κάθε εργαζόμενο"
 
@@ -228,17 +177,78 @@ function xml_extract($file){
 } // Τέλος συνάρτησης xml_extract
 
 
+
+function analyze_data($income, $income_type){
+	global $pliromes, $payment, $first, $second;
+
+	// Κρατήσεις
+	foreach($income->de as $de){
+		$code = '';
+		$code = (string) trim($de['code']);				
+		
+		if(array_key_exists($code, $pliromes[$income_type])){							
+			$pliromes[$income_type][$code]['amount'] += (float) trim($de['amount']);
+		}else {
+			$amount = (float) trim($de['amount']);
+			$pliromes[$income_type][$code] = array('desc' => $code, 'kratisi' => 1, 'amount' => $amount);
+			//$pliromes[$income_type]['gen_krat'] += (float) trim($de['amount']);
+		} 
+	}				
+			
+	// Βασικός και επιδόματα		
+	foreach($income->gr as $gr){
+		$code = '';
+		$code = (string) trim($gr['kae']);	
+		//echo $code .'-';		
+		
+		if(array_key_exists($code, $pliromes[$income_type])){
+			$pliromes[$income_type][$code]['amount'] += (float) trim($gr['amount']);
+		}else {		
+			$amount = (float) trim($gr['amount']);
+			$pliromes[$income_type][$code] = array('desc' => $code, 'kratisi' => 0, 'amount' => $amount);			
+			//$pliromes[$income_type]['gen_epid'] += (float) trim($de['amount']);
+		} 
+		
+	}			
+		
+	// Εργοδοτικές εισφορές			
+	foreach($income->et as $et){
+		$code = '';
+		$code = (string) trim($et['kae']);	
+		//echo $code .'-';		
+		
+		if(array_key_exists($code, $pliromes[$income_type])){
+			$pliromes[$income_type][$code]['amount'] += (float) trim($et['amount']);						
+		}else {							
+			//$pliromes[$income_type]['gen_epid'] += (float) trim($de['amount']);
+		} 
+		
+	}
+
+
+}
+
+
+
+
 function days_diff($end, $start, $string = TRUE){
+	return '';
+
+/*
 	$diff = strtotime($end) - strtotime($start);
 	$days = floor($diff / (24 * 60 * 60));
 
-	$gr_start = date('d/m/Y', strtotime($start));
-	$gr_end = date('d/m/Y', strtotime($end));
-	if($string){ 
-		return '<b>' . $days . ' ημέρες</b> (Από ' . $gr_start . ' Εως ' . $gr_end . ')';
+	if($days > 0){
+		$gr_start = date('d/m/Y', strtotime($start));
+		$gr_end = date('d/m/Y', strtotime($end));
+		if($string){ 
+			return '<b>' . $days . ' ημέρες</b> (Από ' . $gr_start . ' Εως ' . $gr_end . ')';
+		}else{
+			return $days;		
+		}
 	}else{
-		return $days;		
-	}
+		return '';
+	}*/
 }
 
 function bfglob($path, $pattern = '*', $flags = 0, $depth = 0) {
