@@ -1,3 +1,7 @@
+body {
+	background: #efefef;
+}
+
 a, a:link, a:visited {
 	color: #294684;
 }
@@ -70,3 +74,6 @@ a.download:hover {
 	color: #666;
 	font-size: 11px;
 }
+
+tr:nth-child(even) td, tr.even td {background:#e5ecf9;}
+tr.odd td {background:#eaeaea;}

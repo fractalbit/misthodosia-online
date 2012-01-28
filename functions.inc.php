@@ -64,7 +64,7 @@ function print_header(){
 	<div class="container">';
 
 	//if(!empty(ORG_TITLE) && !empty(ORG_URL))
-		echo '<h2><a href="'.ORG_URL.'" class="button">'.ORG_TITLE.'</a> - <a href="index.php" class="button">Μισθοδοσία online</a></h2><hr /><br />';
+		echo '<h2><a href="'.ORG_URL.'" class="button">'.ORG_TITLE.'</a> &raquo; <a href="index.php" class="button">Μισθοδοσία online</a></h2><hr /><br />';
 
 
 }
