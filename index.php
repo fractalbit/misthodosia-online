@@ -132,7 +132,7 @@ print_footer();
 
 
 function get_html($key, $user){
-	global $name, $label, $codes, $analysis;
+	global $name, $code_id, $codes, $analysis;
 
 	ob_start();
 
@@ -167,52 +167,80 @@ function get_html($key, $user){
 		echo '<br /><br />Τύπος Μισθοδοσίας: '. get_type($income_type) . '<br />';	
 
 		echo '<table cellpadding="0" cellspacintg="0" width="100%" >
-		<tr><td valign="top" style="width: 310px; vertical-align: top;">	
-		<table class="compare" cellpadding="5" cellspacing="0">
-			<tr><td colspan="2" style="text-align: center"><b>Εισφ. Ασφαλισμένου - Δάνεια</b></td></tr>';
+		<tr><td valign="top" style="width: 310px; vertical-align: top;">';	
 		
-		
-		foreach($income as $label => $data){
-			if($data['amount'] != 0 && $label != 'andr' && $data['kratisi'] == 1){
-				echo '<tr><td style="width: 190px;">'. get_code($label, $codes, $income) . '</td><td style="width: 110px;">' . sprintf('%01.2f €', $data['amount']) . '</td></tr>';		
-				$kratiseis += $data['amount'];
-			}														
-		}
-		echo '</table>';
+			// Κρατήσεις ασφαλισμένου
+			$key = 'kratiseis-asfalismenou';
+
+			echo '<table class="compare" cellpadding="5" cellspacing="0">
+				<tr><td colspan="2" style="text-align: center"><b>'.$income[$key]['desc'].'</b></td></tr>';
+			foreach($income[$key]['data'] as $code_id => $data){
+				if($data['amount'] != 0){
+					echo '<tr><td style="width: 190px;">'. get_code($code_id, $codes, $income, $key) . '</td><td style="width: 110px;">' . sprintf('%01.2f €', $data['amount']) . '</td></tr>';		
+					$kratiseis += $data['amount'];
+				}														
+			}
+			echo '<tr class="subtle"><td style="width: 190px;">Σύνολο</td><td style="width: 110px;">' . sprintf('%01.2f €', $kratiseis) . '</td></tr>';	
+			echo '</table>';
+
+
 
 		echo '</td>
 		<td valign="top" style="width: 310px; vertical-align: top;">';
+		
+
+
+		// Βασικός και επιδόματα = Ακαθάριστες αποδοχές
+		$key = 'epidomata';
 		echo '<div style="margin-bottom: 25px;">';
 		echo '<table class="compare" cellpadding="5" cellspacing="0">';
-		foreach($income as $label => $data){
-			if($data['kratisi'] == 0 && !$shown){
-				echo '<tr><td colspan="2" style="text-align: center"><b>Βασικός και επιδόματα</b></td></tr>';
-				$shown = TRUE;
-			}
-			if($data['amount'] != 0 && $label != 'andr' && $data['kratisi'] == 0){
-				if($label == '0213'){
+		echo '<tr><td colspan="2" style="text-align: center"><b>'.$income[$key]['desc'].'</b></td></tr>';
+		foreach($income[$key]['data'] as $code_id => $data){
+			if($data['amount'] != 0){
+				if($code_id == '0213'){
 					$children = get_children($data['amount']);
 					//dump($children);
 				}
-				echo '<tr><td style="width: 190px;">'. get_code($label, $codes, $income) . $children .'</td><td style="width: 110px;">' . sprintf('%01.2f €', $data['amount']) . '</td></tr>';			
-				$children = '';
-				$akatharistes += $data['amount'];	
-			}
+				echo '<tr><td style="width: 190px;">'. get_code($code_id, $codes, $income, $key) . $children . '</td><td style="width: 110px;">' . sprintf('%01.2f €', $data['amount']) . '</td></tr>';		
+				$akatharistes += $data['amount'];
+			}														
 		}
-		echo '</table>';
-		echo '</div>';
-	
-		echo '</td></tr>
-		</table>';
+		echo '<tr class="subtle"><td style="width: 190px;">Σύνολο</td><td style="width: 110px;">' . sprintf('%01.2f €', $akatharistes) . '</td></tr>';	
+
+		echo '</table></div>';
+
+		
+
+		// Εργοδοτικές εισφορές
+		$key = 'kratiseis-ergodoti';
+		echo '<div style="margin-bottom: 25px;">';
+		echo '<table class="compare" cellpadding="5" cellspacing="0">';
+		echo '<tr><td colspan="2" style="text-align: center"><b>'.$income[$key]['desc'].'</b></td></tr>';
+		foreach($income[$key]['data'] as $code_id => $data){
+			if($data['amount'] != 0){				
+				echo '<tr><td style="width: 190px;">'. get_code($code_id, $codes, $income, $key) . '</td><td style="width: 110px;">' . sprintf('%01.2f €', $data['amount']) . '</td></tr>';		
+				$ergodotikes += $data['amount'];
+			}														
+		}
+		echo '<tr class="subtle"><td style="width: 190px;">Σύνολο</td><td style="width: 110px;">' . sprintf('%01.2f €', $ergodotikes) . '</td></tr>';	
+		echo '</table></div>';
+
+
+		
+		// Εντελόμενο = Ακαθάριστες αποδοχές + Εργοδοτικές εισφορές
+		echo '<div style="margin-bottom: 25px;">';
+		echo '<table class="compare" cellpadding="5" cellspacing="0">';		
+		echo '<tr class="subtle"><td style="width: 190px;">Εντελόμενο</td><td style="width: 110px;">' . sprintf('%01.2f €', $akatharistes+$ergodotikes) . '</td></tr>';
+		echo '</table></div>';
+
+
+
+
+		echo '</td></tr></table></div>';
 
 	}
-	echo '</div>
-
-	<table class="compare totals" cellpadding="5" cellspacing="0" align="left" style="width: 620px; margin-bottom: 60px;">
-	<tr><td><b>Σύνολο Κρατήσεων</b></td><td><b>Ακαθάριστες αποδοχές</b></td></tr>
-	<tr><td><b>'.$kratiseis.'</b></td><td><b>'.$akatharistes.'</b></td></tr>
-	</table>
-
+	echo '
+	
 	<table class="compare totals" cellpadding="5" cellspacing="0" align="left" style="width: 620px; margin-bottom: 60px;">
 	<tr><td colspan="3"><b>Σύνολα</b></td></tr>
 	<tr><td>&nbsp;</td><td>Α\' Δεκαπενθήμερο</td><td>' . sprintf('%01.2f €', $user['firsthalf']) . '</td></tr>';
@@ -321,12 +349,12 @@ function stat_log($afm, $status = "success"){
 	$exec = mysql_query("INSERT INTO vev_stats (afm, time, date, status) VALUES ('$afm', $now, '$date', '$status')") or die(mysql_error());
 }*/
 
-function get_code($label, $codes, $analysis){
+function get_code($code_id, $codes, $analysis, $key){
 	
-	if(array_key_exists($label, $codes)){
-		$code = $codes[$label]['desc'];
+	if(array_key_exists($code_id, $codes[$key]['data'])){
+		$code = $codes[$key]['data'][$code_id]['desc'];
 	}else{
-		$code = $analysis[$label]['desc'];
+		$code = $analysis[$key]['data'][$code_id]['desc'];		
 	}
 
 	return $code;

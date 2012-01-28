@@ -181,17 +181,16 @@ function xml_extract($file){
 function analyze_data($income, $income_type){
 	global $pliromes, $payment, $first, $second;
 
-	// Κρατήσεις
+	// Εισφορές ασφαλισμένου
 	foreach($income->de as $de){
 		$code = '';
 		$code = (string) trim($de['code']);				
 		
 		if(array_key_exists($code, $pliromes[$income_type])){							
-			$pliromes[$income_type][$code]['amount'] += (float) trim($de['amount']);
+			$pliromes[$income_type]['kratiseis-asfalismenou']['data'][$code]['amount'] += (float) trim($de['amount']);
 		}else {
 			$amount = (float) trim($de['amount']);
-			$pliromes[$income_type][$code] = array('desc' => $code, 'kratisi' => 1, 'amount' => $amount);
-			//$pliromes[$income_type]['gen_krat'] += (float) trim($de['amount']);
+			$pliromes[$income_type]['kratiseis-asfalismenou']['data'][$code] = array('desc' => $code, 'amount' => $amount);
 		} 
 	}				
 			
@@ -199,30 +198,26 @@ function analyze_data($income, $income_type){
 	foreach($income->gr as $gr){
 		$code = '';
 		$code = (string) trim($gr['kae']);	
-		//echo $code .'-';		
 		
 		if(array_key_exists($code, $pliromes[$income_type])){
-			$pliromes[$income_type][$code]['amount'] += (float) trim($gr['amount']);
+			$pliromes[$income_type]['epidomata']['data'][$code]['amount'] += (float) trim($gr['amount']);
 		}else {		
 			$amount = (float) trim($gr['amount']);
-			$pliromes[$income_type][$code] = array('desc' => $code, 'kratisi' => 0, 'amount' => $amount);			
-			//$pliromes[$income_type]['gen_epid'] += (float) trim($de['amount']);
-		} 
-		
+			$pliromes[$income_type]['epidomata']['data'][$code] = array('desc' => $code, 'amount' => $amount);				
+		}		
 	}			
 		
 	// Εργοδοτικές εισφορές			
 	foreach($income->et as $et){
 		$code = '';
-		$code = (string) trim($et['kae']);	
-		//echo $code .'-';		
-		
+		$code = (string) trim($et['code']);	
+			
 		if(array_key_exists($code, $pliromes[$income_type])){
-			$pliromes[$income_type][$code]['amount'] += (float) trim($et['amount']);						
+			$pliromes[$income_type]['kratiseis-ergodoti']['data'][$code]['amount'] += (float) trim($et['amount']);						
 		}else {							
-			//$pliromes[$income_type]['gen_epid'] += (float) trim($de['amount']);
-		} 
-		
+			$amount = (float) trim($et['amount']);
+			$pliromes[$income_type]['kratiseis-ergodoti']['data'][$code] = array('desc' => $code, 'amount' => $amount);
+		}
 	}
 
 

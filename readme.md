@@ -40,7 +40,7 @@ Aπαιτείται Apache web server με υποστήριξη PHP 5. Η εφα
 είναι πολύ απλή. Κάθε φορά που στέλνετε νέο αρχείο XML στην ΕΑΠ, θα
 πρέπει να ανεβάζετε αυτό το αρχείο στο website, στο φάκελο
 **misthodosia-online/XMLData** και στη συνέχεια να «τρέχετε» το
-scanXMLdata.php (για να τρέξετε το scanXMLdata.php θα πρέπει να
+**scanXMLdata.php** (για να τρέξετε το scanXMLdata.php θα πρέπει να
 επισκεφθείτε τη διεύθυνση:
 http://url-tou-site-sas/misthodosia-online/scanXMLdata.php). Tο αρχείο
 αυτο, διαβάζει όλα τα XML αρχεία που υπάρχουν σε αυτό το φάκελο και στη
