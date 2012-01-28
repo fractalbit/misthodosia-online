@@ -22,66 +22,39 @@
 // Εδώ μπορούν να προστεθούν κωδικοί που δεν υπάρχουν ήδη.
 /* *********** ΤΕΛΟΣ ΓΕΝΙΚΗΣ ΠΕΡΙΓΡΑΦΗΣ *********** */
 
-$codes = array(	'kratiseis-asfalismenou' => array(
+$codes = array(	'kratiseis' => array(
 						'desc' => 'Εισφ. Ασφαλισμένου - Δάνεια',
 						'data' => array(
-							'4008300' => array('desc' => 'Δάνειο Ταχυδρομικού', amount => 0),
-							'4013605' => array('desc' => 'ΤΠΔΥ 1%', amount => 0),
-							'4051700' => array('desc' => 'ΟΑΕΔ 1%', amount => 0),
-							'3082800' => array('desc' => 'Αλληλεγγύης 2%', amount => 0),
-							'3082400' => array('desc' => 'Υπερ Σύνταξης', amount => 0),
-							'3081100' => array('desc' => 'Υγειον. Περιθαλψη', amount => 0),
-							'4052000' => array('desc' => 'Υγειον. Περιθαλψη', amount => 0),
-							'4013601' => array('desc' => 'ΤΠΔΥ', amount => 0),
-							'3011300' => array('desc' => 'Φόρος', amount => 0),
-							'3089100' => array('desc' => 'Ειδική εισφορά αλληλεγγύης 2012', amount => 0),
-							'4003101' => array('desc' => 'ΜΠΤΥ', amount => 0),
-							'4003103' => array('desc' => 'ΜΠΤΥ Νεοδιόριστου', amount => 0),
-							'3324300' => array('desc' => 'Απεργία', amount => 0),
-							'3324100' => array('desc' => 'Στάση', amount => 0),
-							'3122800' => array('desc' => 'Πρόσθετο ποσοστό 20% στα τέλη χαρτοσήμου', amount => 0),
-							'4003108' => array('desc' => 'Μετοχικό Ταμείο Πολιτικών Υπαλλήλων (82985)', amount => 0),
-							'4003107' => array('desc' => 'Μ.Τ.Π.Υ. Πρόσθετες Αμοιβές', amount => 0),
-							'4012504' => array('desc' => 'ΤΕΑΔΥ Πρόσθετες Αμοιβές', amount => 0),
-							'4009600' => array('desc' => 'ΤΑΠΙΤ (πρώην Τ.Α.Ξ.Υ)', amount => 0),
-							'4033500' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. κύρια σύνταξη', amount => 0),
-							'4033701' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. ειδική προσαύξηση', amount => 0),
-							'4033702' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. εφάπαξ ειδικός λογαριασμός', amount => 0),
-							'4033800' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. επικουρική ασφάλιση', amount => 0),
-							'4033900' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. εφάπαξ παροχών', amount => 0),
-							'4034000' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. υγεία τεχνικών', amount => 0),
-							'4002100' => array('desc' => 'ΙΚΑ', amount => 0),
-							'4012501' => array('desc' => 'ΤΕΑΔΥ Ασφαλισμένου', amount => 0),
-							'4012502' => array('desc' => 'ΤΕΑΔΥ Νεοδιόριστου', amount => 0),
-							'4013500' => array('desc' => 'Δάνειο Παρακαταθηκών', amount => 0)
-						)
-
-					),
-
-				'kratiseis-ergodoti' => array(
-						'desc' => 'Εισφορές Εργοδότη',
-						'data' => array(
-							
-							'4012501' => array('desc' => 'ΤΕΑΔΥ Εργοδότη', amount => 0),
-							'3082400' => array('desc' => 'Υπερ Σύνταξης', amount => 0),						
-							'4052000' => array('desc' => 'Υγειον. Περιθαλψη', amount => 0),
-							'4013601' => array('desc' => 'ΤΠΔΥ', amount => 0),						
-							'4003101' => array('desc' => 'ΜΠΤΥ', amount => 0),
-							'4003103' => array('desc' => 'ΜΠΤΥ Νεοδιόριστου', amount => 0),						
-							'3122800' => array('desc' => 'Πρόσθετο ποσοστό 20% στα τέλη χαρτοσήμου', amount => 0),
-							'4003108' => array('desc' => 'Μετοχικό Ταμείο Πολιτικών Υπαλλήλων (82985)', amount => 0),
-							'4003107' => array('desc' => 'Μ.Τ.Π.Υ. Πρόσθετες Αμοιβές', amount => 0),
-							'4012504' => array('desc' => 'ΤΕΑΔΥ Πρόσθετες Αμοιβές', amount => 0),
-							'4009600' => array('desc' => 'ΤΑΠΙΤ (πρώην Τ.Α.Ξ.Υ)', amount => 0),
-							'4033500' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. κύρια σύνταξη', amount => 0),
-							'4033701' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. ειδική προσαύξηση', amount => 0),
-							'4033702' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. εφάπαξ ειδικός λογαριασμός', amount => 0),
-							'4033800' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. επικουρική ασφάλιση', amount => 0),
-							'4033900' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. εφάπαξ παροχών', amount => 0),
-							'4034000' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. υγεία τεχνικών', amount => 0),
-							'4002100' => array('desc' => 'ΙΚΑ', amount => 0),					
-							'4013500' => array('desc' => 'Δάνειο Παρακαταθηκών', amount => 0)
-
+							'4008300' => array('desc' => 'Δάνειο Ταχυδρομικού', amount_asf => 0, amount_erg => 0),
+							'4013605' => array('desc' => 'ΤΠΔΥ 1%', amount_asf => 0, amount_erg => 0),
+							'4051700' => array('desc' => 'ΟΑΕΔ 1%', amount_asf => 0, amount_erg => 0),
+							'3082800' => array('desc' => 'Αλληλεγγύης 2%', amount_asf => 0, amount_erg => 0),
+							'3082400' => array('desc' => 'Υπερ Σύνταξης', amount_asf => 0, amount_erg => 0),
+							'3081100' => array('desc' => 'Υγειον. Περιθαλψη', amount_asf => 0, amount_erg => 0),
+							'4052000' => array('desc' => 'Υγειον. Περιθαλψη', amount_asf => 0, amount_erg => 0),
+							'4013601' => array('desc' => 'ΤΠΔΥ', amount_asf => 0, amount_erg => 0),
+							'3011300' => array('desc' => 'Φόρος', amount_asf => 0, amount_erg => 0),
+							'3089100' => array('desc' => 'Ειδική εισφορά αλληλεγγύης 2012', amount_asf => 0, amount_erg => 0),
+							'4003101' => array('desc' => 'ΜΠΤΥ', amount_asf => 0, amount_erg => 0),
+							'4003103' => array('desc' => 'ΜΠΤΥ Νεοδιόριστου', amount_asf => 0, amount_erg => 0),
+							'3324300' => array('desc' => 'Απεργία', amount_asf => 0, amount_erg => 0),
+							'3324100' => array('desc' => 'Επιστροφές αποδοχών', amount_asf => 0, amount_erg => 0),
+							'3122800' => array('desc' => 'Πρόσθετο ποσοστό 20% στα τέλη χαρτοσήμου', amount_asf => 0, amount_erg => 0),
+							'4003108' => array('desc' => 'Μετοχικό Ταμείο Πολιτικών Υπαλλήλων (82985)', amount_asf => 0, amount_erg => 0),
+							'4003107' => array('desc' => 'Μ.Τ.Π.Υ. Πρόσθετες Αμοιβές', amount_asf => 0, amount_erg => 0),
+							'4012504' => array('desc' => 'ΤΕΑΔΥ Πρόσθετες Αμοιβές', amount_asf => 0, amount_erg => 0),
+							'4009600' => array('desc' => 'ΤΑΠΙΤ (πρώην Τ.Α.Ξ.Υ)', amount_asf => 0, amount_erg => 0),
+							'4033500' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. κύρια σύνταξη', amount_asf => 0, amount_erg => 0),
+							'4033701' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. ειδική προσαύξηση', amount_asf => 0, amount_erg => 0),
+							'4033702' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. εφάπαξ ειδικός λογαριασμός', amount_asf => 0, amount_erg => 0),
+							'4033800' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. επικουρική ασφάλιση', amount_asf => 0, amount_erg => 0),
+							'4033900' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. εφάπαξ παροχών', amount_asf => 0, amount_erg => 0),
+							'4034000' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. υγεία τεχνικών', amount_asf => 0, amount_erg => 0),
+							'4002100' => array('desc' => 'ΙΚΑ', amount_asf => 0, amount_erg => 0),
+							'4012501' => array('desc' => 'ΤΕΑΔΥ', amount_asf => 0, amount_erg => 0),
+							'4012502' => array('desc' => 'ΤΕΑΔΥ Νεοδιόριστου', amount_asf => 0, amount_erg => 0),
+							'4013400' => array('desc' => 'ΤΕΑΧ', amount_asf => 0, amount_erg => 0),
+							'4013500' => array('desc' => 'Δάνειο Παρακαταθηκών', amount_asf => 0, amount_erg => 0)
 						)
 
 					),

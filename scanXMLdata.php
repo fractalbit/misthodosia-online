@@ -186,20 +186,36 @@ function analyze_data($income, $income_type){
 		$code = '';
 		$code = (string) trim($de['code']);				
 		
-		if(array_key_exists($code, $pliromes[$income_type])){							
-			$pliromes[$income_type]['kratiseis-asfalismenou']['data'][$code]['amount'] += (float) trim($de['amount']);
+		if(array_key_exists($code, $pliromes[$income_type]['kratiseis']['data'])){							
+			$pliromes[$income_type]['kratiseis']['data'][$code]['amount_asf'] += (float) trim($de['amount']);
 		}else {
 			$amount = (float) trim($de['amount']);
-			$pliromes[$income_type]['kratiseis-asfalismenou']['data'][$code] = array('desc' => $code, 'amount' => $amount);
+			$pliromes[$income_type]['kratiseis']['data'][$code] = array('desc' => $code, 'amount_asf' => $amount, 'amount_erg' => 0);
+			//die($code);
 		} 
 	}				
 			
+	// Εργοδοτικές εισφορές			
+	foreach($income->et as $et){
+		$code = '';
+		$code = (string) trim($et['code']);	
+			
+		if(array_key_exists($code, $pliromes[$income_type]['kratiseis']['data'])){
+			$pliromes[$income_type]['kratiseis']['data'][$code]['amount_erg'] += (float) trim($et['amount']);						
+		}else {							
+			$amount = (float) trim($et['amount']);
+			$pliromes[$income_type]['kratiseis']['data'][$code] = array('desc' => $code, 'amount_asf' => 0, 'amount_erg' => $amount);
+			//die('erg-'.$code);
+		}
+	}
+
+
 	// Βασικός και επιδόματα		
 	foreach($income->gr as $gr){
 		$code = '';
 		$code = (string) trim($gr['kae']);	
 		
-		if(array_key_exists($code, $pliromes[$income_type])){
+		if(array_key_exists($code, $pliromes[$income_type]['epidomata']['data'])){
 			$pliromes[$income_type]['epidomata']['data'][$code]['amount'] += (float) trim($gr['amount']);
 		}else {		
 			$amount = (float) trim($gr['amount']);
@@ -207,18 +223,6 @@ function analyze_data($income, $income_type){
 		}		
 	}			
 		
-	// Εργοδοτικές εισφορές			
-	foreach($income->et as $et){
-		$code = '';
-		$code = (string) trim($et['code']);	
-			
-		if(array_key_exists($code, $pliromes[$income_type])){
-			$pliromes[$income_type]['kratiseis-ergodoti']['data'][$code]['amount'] += (float) trim($et['amount']);						
-		}else {							
-			$amount = (float) trim($et['amount']);
-			$pliromes[$income_type]['kratiseis-ergodoti']['data'][$code] = array('desc' => $code, 'amount' => $amount);
-		}
-	}
 
 
 }

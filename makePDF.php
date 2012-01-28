@@ -45,7 +45,9 @@ $pdf->setLanguageArray($l);
 // ---------------------------------------------------------
 
 // set font
-$pdf->SetFont('dejavusans', '', 10);
+$pdf->SetFont('dejavusans', '');
+
+$pdf->SetFontSize(8, TRUE);
 
 
 foreach($pages as $page){
@@ -67,6 +69,7 @@ if(defined('ORG_URL') && strlen(ORG_URL)>0){
 		// Δημιουργούμε ένα τυχαίο κείμενο που προστίθεται στο τέλος του ονόματος του pdf αρχείου έτσι ώστε
 		// να μην μπορεί κάποιος να κατεβάσει απευθείας το pdf κάποιου άλλου, γνωρίζοντας μόνο το ΑΦΜ του.
 
+		//$salt = '';
 		$output_file = USER_DIR . '/' . $afm . '_' . $salt . '.pdf';
 		$link_file = ORG_URL . '/' . current_dir() . '/' . USER_DIR . '/' . $afm . '_' . $salt . '.pdf';
 		//Close and output PDF document

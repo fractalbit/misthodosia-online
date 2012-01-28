@@ -141,116 +141,167 @@ function get_html($key, $user){
 	$shown = FALSE;
 	//echo '<pre>'.print_r($user).'</pre>';
 
-	$style = '<style>
-	.compare {
-		border-collapse: collapse;
-		width: 300px;	
-	}
+	$style = '
+		<style>
+			.compare {
+				border-collapse: collapse;
+			}
 
-	.compare td {
-		border: 1px solid #666;
-		text-align: right;
-	}
+			.compare td {
+				border: 1px solid #666;
+				text-align: right;
+			}
 
-	.totals td {
-		font-weight: bold;
-	}
-	</style>
+			.totals td {
+				border: 1px solid #666;
+				text-align: center;
+			}
+
+			.special, .special * {
+				font-weight: bold;
+			}
+		
+		</style>
 	';			
 
-	echo $style;					
-	echo '<div style="display: block; width:620px; vertical-align: top; margin-bottom: 25px;">		
+	echo $style;	
+	$tw = 640;				
+	echo '<div style="display: block; width: '.$tw.'px; vertical-align: top; margin-bottom: 25px;">		
 	<h3>'.$name.'</h3>
 	<h4>Περίοδος Μισθοδοσίας: '.$user['month_str'] . ' ' . $user['year'] .'</h4>';
 	$kratiseis = $akatharistes = 0;
-	foreach ($analysis as $income_type => $income) {
-		echo '<br /><br />Τύπος Μισθοδοσίας: '. get_type($income_type) . '<br />';	
 
-		echo '<table cellpadding="0" cellspacintg="0" width="100%" >
-		<tr><td valign="top" style="width: 310px; vertical-align: top;">';	
+	$w1 = 340;
+	$w2 = 125;
+	$w3 = ($w1-$w2) / 3;	
+
+	$total_asf = $total_erg = $total_akatharistes = $total_entelomeno = 0;
+	
+	foreach ($analysis as $income_type => $income) {
+		echo '<br />Τύπος Μισθοδοσίας: '. get_type($income_type) . '<br />';	
+
+		echo '<table cellpadding="0" cellspacintg="0" width="100%">
+		<tr><td valign="top" style="width: '.$w1.'px; vertical-align: top;">';	
 		
+			
 			// Κρατήσεις ασφαλισμένου
-			$key = 'kratiseis-asfalismenou';
+			$key = 'kratiseis';		
 
 			echo '<table class="compare" cellpadding="5" cellspacing="0">
-				<tr><td colspan="2" style="text-align: center"><b>'.$income[$key]['desc'].'</b></td></tr>';
+				<tr><td style="text-align: center; width: '.$w2.'px;"><b>Εισφορές</b></td><td style="width: '.$w3.'px;">Ασφαλ.</td><td style="width: '.$w3.'px;">Εργοδ.</td><td style="width: '.$w3.'px;">Σύνολο</td></tr>';
 			foreach($income[$key]['data'] as $code_id => $data){
-				if($data['amount'] != 0){
-					echo '<tr><td style="width: 190px;">'. get_code($code_id, $codes, $income, $key) . '</td><td style="width: 110px;">' . sprintf('%01.2f €', $data['amount']) . '</td></tr>';		
-					$kratiseis += $data['amount'];
-				}														
+				$asf = $data['amount_asf'];
+				$erg = $data['amount_erg'];
+				$synolo = $asf + $erg;
+
+				$asf != 0 ? $print_asf = sprintf('%01.2f €', $asf) : $print_asf = '';
+				$erg != 0 ? $print_erg = sprintf('%01.2f €', $erg) : $print_erg = '';
+				$synolo != 0 ? $print_synolo = sprintf('%01.2f €', $synolo) : $print_synolo = '';
+
+				if($asf !=0 || $erg != 0){
+					echo '	<tr>
+								<td style="width: '.$w2.'px;">'. get_code($code_id, $codes, $income, $key) . '</td>
+								<td style="width: '.$w3.'px;">'.$print_asf.'</td>
+								<td style="width: '.$w3.'px;">'.$print_erg.'</td>
+								<td style="width: '.$w3.'px;">'.$print_synolo.'</td>
+							</tr>
+						 ';	
+					$syn_asf += $asf;
+					$syn_erg += $erg;
+				}								
 			}
-			echo '<tr class="subtle"><td style="width: 190px;">Σύνολο</td><td style="width: 110px;">' . sprintf('%01.2f €', $kratiseis) . '</td></tr>';	
+			// Γραμμή συνόλων
+			echo '<tr class="subtle"><td style="width: '.$w2.'px;">Σύνολα</td>
+									<td style="width: '.$w3.'px;">' . sprintf('%01.2f €', $syn_asf) . '</td>
+									<td style="width: '.$w3.'px;">' . sprintf('%01.2f €', $syn_erg) . '</td>
+									<td style="width: '.$w3.'px;">' . sprintf('%01.2f €', $syn_asf+$syn_erg) . '</td>
+
+				</tr>';	
 			echo '</table>';
 
+		echo '</td>';
 
-
-		echo '</td>
-		<td valign="top" style="width: 310px; vertical-align: top;">';
 		
 
 
-		// Βασικός και επιδόματα = Ακαθάριστες αποδοχές
-		$key = 'epidomata';
+		$lw = $tw - $w1;
+		$lw1 = 200;
+		$lw2 = $lw - $lw1;
+		echo '<td valign="top" style="width: 210px; vertical-align: top;">';
+
+		// Ακαθάριστες αποδοχές (Βασικός + επιδόματα)
+		$key = 'epidomata';		
 		echo '<div style="margin-bottom: 25px;">';
 		echo '<table class="compare" cellpadding="5" cellspacing="0">';
-		echo '<tr><td colspan="2" style="text-align: center"><b>'.$income[$key]['desc'].'</b></td></tr>';
+		echo '<tr><td colspan="2" style="text-align: center; width: '.$lw.'px;"><b>'.$income[$key]['desc'].'</b></td></tr>';
+		$children = '';
 		foreach($income[$key]['data'] as $code_id => $data){
 			if($data['amount'] != 0){
-				if($code_id == '0213'){
-					$children = get_children($data['amount']);
-					//dump($children);
-				}
-				echo '<tr><td style="width: 190px;">'. get_code($code_id, $codes, $income, $key) . $children . '</td><td style="width: 110px;">' . sprintf('%01.2f €', $data['amount']) . '</td></tr>';		
+				
+				if($code_id == '0213') $children = get_children($data['amount']);
+				
+				echo '<tr><td style="width: '.$lw1.'px;">'. get_code($code_id, $codes, $income, $key) . $children . '</td><td style="width: '.$lw2.'px;">' . sprintf('%01.2f €', $data['amount']) . '</td></tr>';		
 				$akatharistes += $data['amount'];
 			}														
 		}
-		echo '<tr class="subtle"><td style="width: 190px;">Σύνολο</td><td style="width: 110px;">' . sprintf('%01.2f €', $akatharistes) . '</td></tr>';	
+		echo '<tr class="subtle"><td style="width: '.$lw1.'px;">Σύνολο</td><td style="width: '.$lw2.'px;">' . sprintf('%01.2f €', $akatharistes) . '</td></tr>';	
 
 		echo '</table></div>';
 
 		
-
-		// Εργοδοτικές εισφορές
-		$key = 'kratiseis-ergodoti';
-		echo '<div style="margin-bottom: 25px;">';
-		echo '<table class="compare" cellpadding="5" cellspacing="0">';
-		echo '<tr><td colspan="2" style="text-align: center"><b>'.$income[$key]['desc'].'</b></td></tr>';
-		foreach($income[$key]['data'] as $code_id => $data){
-			if($data['amount'] != 0){				
-				echo '<tr><td style="width: 190px;">'. get_code($code_id, $codes, $income, $key) . '</td><td style="width: 110px;">' . sprintf('%01.2f €', $data['amount']) . '</td></tr>';		
-				$ergodotikes += $data['amount'];
-			}														
-		}
-		echo '<tr class="subtle"><td style="width: 190px;">Σύνολο</td><td style="width: 110px;">' . sprintf('%01.2f €', $ergodotikes) . '</td></tr>';	
-		echo '</table></div>';
-
 
 		
 		// Εντελόμενο = Ακαθάριστες αποδοχές + Εργοδοτικές εισφορές
 		echo '<div style="margin-bottom: 25px;">';
 		echo '<table class="compare" cellpadding="5" cellspacing="0">';		
-		echo '<tr class="subtle"><td style="width: 190px;">Εντελόμενο</td><td style="width: 110px;">' . sprintf('%01.2f €', $akatharistes+$ergodotikes) . '</td></tr>';
+		echo '<tr class="subtle"><td style="width: '.$lw1.'px;">Εντελόμενο</td><td style="width: '.$lw2.'px;">' . sprintf('%01.2f €', $akatharistes+$syn_erg) . '</td></tr>';
 		echo '</table></div>';
 
 
 
 
-		echo '</td></tr></table></div>';
+		echo '</td></tr></table>';
+
+		$total_asf += $syn_asf;
+		$total_erg += $syn_erg;
+		$total_akatharistes += $akatharistes;
+		$total_entelomeno += ($akatharistes + $syn_erg);
+
+		$syn_asf = $syn_erg = $akatharistes = 0;
+
 
 	}
+
+	echo '</div>';
+
+	$pw1 = $tw / 8;
+	echo '<div style="margin-top: 25px; margin-bottom: 30px;">';
 	echo '
-	
-	<table class="compare totals" cellpadding="5" cellspacing="0" align="left" style="width: 620px; margin-bottom: 60px;">
-	<tr><td colspan="3"><b>Σύνολα</b></td></tr>
-	<tr><td>&nbsp;</td><td>Α\' Δεκαπενθήμερο</td><td>' . sprintf('%01.2f €', $user['firsthalf']) . '</td></tr>';
+	<table class="totals" cellpadding="5" cellspacing="0" style="width: '.$tw.'px;">
+	<tr>
+		<td style="width: '.$pw1.'px;" class="subtle">Ακαθάριστες Αποδοχές</td>
+		<td style="width: '.$pw1.'px;" class="subtle">Εντελόμενο</td>
+		<td style="width: '.$pw1.'px;" class="subtle">Εισφορές Ασφαλ.</td>
+		<td style="width: '.$pw1.'px;" class="subtle">Εισφορές Εργοδότη</td>
+		<td style="width: '.$pw1.'px;" class="subtle">Εισφορές Σύνολο</td>
+		<td style="width: '.$pw1.'px;" class="special">Πληρωτέο Μηνός</td>
+		<td style="width: '.$pw1.'px;" class="special">Α\' Δεκαπενθ.</td>
+		<td style="width: '.$pw1.'px;" class="special">Β\' Δεκαπενθ.</td>
+	</tr>
+		<tr>
+		<td style="width: '.$pw1.'px;" class="subtle">'.sprintf('%01.2f €', $total_akatharistes).'</td>
+		<td style="width: '.$pw1.'px;" class="subtle">'.sprintf('%01.2f €', $total_entelomeno).'</td>
+		<td style="width: '.$pw1.'px;" class="subtle">'.sprintf('%01.2f €', $total_asf).'</td>
+		<td style="width: '.$pw1.'px;" class="subtle">'.sprintf('%01.2f €', $total_erg).'</td>
+		<td style="width: '.$pw1.'px;" class="subtle">'.sprintf('%01.2f €', $total_asf+$total_erg).'</td>
+		<td style="width: '.$pw1.'px;" class="special">'.sprintf('%01.2f €', $user['firsthalf']+$user['secondhalf']).'</td>
+		<td style="width: '.$pw1.'px;" class="special">'.sprintf('%01.2f €', $user['firsthalf']).'</td>
+		<td style="width: '.$pw1.'px;" class="special">'.sprintf('%01.2f €', $user['secondhalf']).'</td>
+	</tr>
 
-	echo '<tr><td>&nbsp;</td><td>Β\' Δεκαπενθήμερο</td><td>' . sprintf('%01.2f €', $user['secondhalf']) . '</td></tr>';
-
-	echo '<tr><td>&nbsp;</td><td>Πληρωτέο μηνός</td><td>' . sprintf('%01.2f €', $user['firsthalf']+$user['secondhalf']) . '</td></tr>
 
 	</table>';
-
+	echo '</div>';
 
 
 	$html = ob_get_contents();
