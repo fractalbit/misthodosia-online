@@ -158,6 +158,7 @@ function xml_extract($file){
 
 		// Πρόσθεσε τα οικονομικά δεδομένα της περιόδου
 		$dataset[$afm][$period_str] = array(
+												'month' => $month,
 												'month_str' => $month_str, // Λεκτική περιγραφή περιόδου
 												'year' => $year, // Έτος μισθοδοτικής περιόδου (σώπα!)
 												'firsthalf' => $first, // Α δεκαπενθήμερο

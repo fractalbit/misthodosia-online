@@ -62,6 +62,9 @@ if(isset($_POST['proccess'])){
 					$name = $periods['personal_info']['lastname'] . ' ' . $periods['personal_info']['firstname']  .' (' . $afm . ')';
 
 					$pages = array();
+
+					mo_print_float_menu($periods);
+
 					foreach($periods as $key => $data){
 						//echo $key . '<br />';
 						if($key != 'personal_info'){
@@ -129,6 +132,19 @@ echo '<div class="information box" style="margin-top: 30px;">
 print_footer();
 
 
+function mo_print_float_menu($periods){
+
+	echo '<div class="floating-menu">';
+	echo '<h3>Γρήγορη μετάβαση</h3>';
+	foreach ($periods as $key => $data) {
+		$name = $data['month_str'] . ' ' . $data['year'];
+		$link = 'period' . $data['month'] . '-' . $data['year'];
+		echo '<a href="#'.$link.'">'.$name.'</a>';
+	}
+	echo '</div>';
+}
+
+
 function get_html($key, $user){
 	global $name, $code_id, $codes, $analysis;
 
@@ -164,6 +180,7 @@ function get_html($key, $user){
 
 	echo $style;	
 	$tw = 640;				
+	echo '<a name="period'.$user['month'] . '-' . $user['year'].'"></a>';
 	echo '<div style="display: block; width: '.$tw.'px; vertical-align: top; margin-bottom: 25px;">		
 	<h3>'.$name.'</h3>
 	<h4>Περίοδος Μισθοδοσίας: '.$user['month_str'] . ' ' . $user['year'] .'</h4>';
@@ -441,6 +458,3 @@ function clean_up($limit = CLEAN_UP_AFTER){
 		if($dif > $limit) unlink($file);
 	}
 }
-
-
-

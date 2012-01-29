@@ -77,3 +77,22 @@ a.download:hover {
 
 tr:nth-child(even) td, tr.even td {background:#e5ecf9;}
 tr.odd td {background:#eaeaea;}
+
+
+div.floating-menu {
+	position: fixed;
+	background: #fff4c8;
+	border: 1px solid #ffcc00;
+	width: 180px; 
+	z-index: 100;
+	right: 10px;
+	padding: 12px;
+	max-height: 550px;
+	overflow: auto;
+}
+
+div.floating-menu a, div.floating-menu h3 {
+	display: block;
+	padding: 6px 0;
+	margin: 0px;
+}
