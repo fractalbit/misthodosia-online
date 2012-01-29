@@ -295,7 +295,7 @@ function get_html($key, $user){
 	<table class="totals" cellpadding="5" cellspacing="0" style="width: '.$tw.'px;">
 	<tr>
 		<td style="width: '.$pw1.'px;" class="subtle">Ακαθάριστες Αποδοχές</td>
-		<td style="width: '.$pw1.'px;" class="subtle">Εντελόμενο</td>
+		<td style="width: '.$pw1.'px;" class="subtle">Σύνολο Δαπάνης</td>
 		<td style="width: '.$pw1.'px;" class="subtle">Εισφορές Ασφαλ.</td>
 		<td style="width: '.$pw1.'px;" class="subtle">Εισφορές Εργοδότη</td>
 		<td style="width: '.$pw1.'px;" class="subtle">Εισφορές Σύνολο</td>
