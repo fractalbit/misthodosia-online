@@ -39,7 +39,7 @@ function save_file($filename, $data){
  	return $data;
  }
 
- function rand_str($length = 10) {    
+function rand_str($length = 10) {    
     $characters = '0123456789abcdefghijklmnopqrstuvwxyz';
     $string = '';    
     for ($p = 0; $p < $length; $p++) {
