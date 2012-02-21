@@ -93,9 +93,10 @@ function xml_extract($file){
 
 
 	foreach($xml->body->organizations->organization as $org){
+		// Για κάθε οργανισμό...
 		
 		foreach($org->employees->employee as $employee){
-		// Για κάθε εργαζόμενο που υπάρχει στο .xml...
+		// Για κάθε εργαζόμενο που υπάρχει στον οργανισμό...
 			
 			$pliromes = array();
 
