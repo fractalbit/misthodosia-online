@@ -92,84 +92,88 @@ function xml_extract($file){
 	$period_str = $period['year'] . '_' . $period['month'] . '_' . $xml->header->transaction->periodType['value'];
 
 
-	foreach($xml->body->organizations->organization->employees->employee as $employee){
-	// Για κάθε εργαζόμενο που υπάρχει στο .xml...
+	foreach($xml->body->organizations->organization as $org){
 		
-		$pliromes = array();
+		foreach($org->employees->employee as $employee){
+		// Για κάθε εργαζόμενο που υπάρχει στο .xml...
+			
+			$pliromes = array();
 
-		$afm = ''.$employee->identification->tin;
-		$amm = ''.$employee->identification->amm;
-		$user = $employee->identification;		
+			$afm = ''.$employee->identification->tin;
+			$amm = ''.$employee->identification->amm;
+			$user = $employee->identification;		
 
-		if(array_key_exists($afm, $changed_afm)) {
-		// Αν το ΑΦΜ υπάρχει στον πίνακα των ΑΦΜ που έχουν αλλάξει (config.inc.php)...
-			$afm = $changed_afm[$afm]; // Τότε ορίζουμε το ΑΦΜ στο πιο πρόσφατο
-		// Με αυτό τον τρόπο τα σοιχεία του μισθοδοτούμενου θα ενοποιηθούν κάτω από ΕΝΑ ΑΦΜ (το πιο πρόσφατο) και όχι δύο.
-		}	
+			if(array_key_exists($afm, $changed_afm)) {
+			// Αν το ΑΦΜ υπάρχει στον πίνακα των ΑΦΜ που έχουν αλλάξει (config.inc.php)...
+				$afm = $changed_afm[$afm]; // Τότε ορίζουμε το ΑΦΜ στο πιο πρόσφατο
+			// Με αυτό τον τρόπο τα σοιχεία του μισθοδοτούμενου θα ενοποιηθούν κάτω από ΕΝΑ ΑΦΜ (το πιο πρόσφατο) και όχι δύο.
+			}	
 
-		$update = FALSE;
-		// Αν η τρέχουσα περίοδος είναι πιο πρόσφατη από την καταχωρημένη για αυτό τον μισθοδοτούμενο,
-		// τότε και μόνο τότε ενημέρωσε τα προσωπικά του στοιχεία
-		if($date_test > $dataset[$afm]['personal_info']['date']){
-			$update = TRUE;	
-		}else{
 			$update = FALSE;
-		}
-		// Με αυτό τον τρόπο αποθηκεύονται μόνο τα προσωπικά στοιχεία της πιο πρόσφατης περιόδου.
-		// Σημαντικό αν π.χ. έχει διορθωθεί ο ΑΜ του μισθοδοτούμενου.
+			// Αν η τρέχουσα περίοδος είναι πιο πρόσφατη από την καταχωρημένη για αυτό τον μισθοδοτούμενο,
+			// τότε και μόνο τότε ενημέρωσε τα προσωπικά του στοιχεία
+			if($date_test > $dataset[$afm]['personal_info']['date']){
+				$update = TRUE;	
+			}else{
+				$update = FALSE;
+			}
+			// Με αυτό τον τρόπο αποθηκεύονται μόνο τα προσωπικά στοιχεία της πιο πρόσφατης περιόδου.
+			// Σημαντικό αν π.χ. έχει διορθωθεί ο ΑΜ του μισθοδοτούμενου.
 
-		$a = 0;
-		$anadromika = 0;	
-		$days = '';
-		$first = $second = 0;
-	
-		foreach($employee->payment as $payment){
-			// Για κάθε καταχώρηση πληρωμής του εργαζόμενου
+			$a = 0;
+			$anadromika = 0;	
+			$days = '';
+			$first = $second = 0;
+		
+			foreach($employee->payment as $payment){
+				// Για κάθε καταχώρηση πληρωμής του εργαζόμενου
 
-			foreach ($payment->income as $income) {
-				$income_type = (string) $income['type'];	
-				
-				if(count($pliromes[$income_type]) == 0){
-					$pliromes[$income_type] = $codes;				
-				}	
-				
-				analyze_data($income, $income_type);
+				foreach ($payment->income as $income) {
+					$income_type = (string) $income['type'];	
+					
+					if(count($pliromes[$income_type]) == 0){
+						$pliromes[$income_type] = $codes;				
+					}	
+					
+					analyze_data($income, $income_type);
+				}
+
+				$first += (float) trim($payment->netAmount1['value']);
+				$second += (float) trim($payment->netAmount2['value']);	
+							
+				$a++;			
+			
+			} // ΤΕΛΟΣ "Για κάθε πληρωμή του μισθοδοτούμενου"
+			
+			if($update){
+				// Ανανέωσε τα προσωπικά δεδομένα μόνο αν είναι νεότερα (βλέπε τον ορισμό της $update)
+				$dataset[$afm]['personal_info'] = array(
+															'firstname' => ''.$user->firstName,
+															'lastname' => ''.$user->lastName, 
+															'amm' => ''.$amm,
+															'afm' => ''.$afm,
+															'iban' => ''.$user->bankAccount['iban'],
+															'mk' => $mk,
+															'date' => $date_test
+														);
 			}
 
-			$first += (float) trim($payment->netAmount1['value']);
-			$second += (float) trim($payment->netAmount2['value']);	
-						
-			$a++;			
-		
-		} // ΤΕΛΟΣ "Για κάθε πληρωμή του μισθοδοτούμενου"
-		
-		if($update){
-			// Ανανέωσε τα προσωπικά δεδομένα μόνο αν είναι νεότερα (βλέπε τον ορισμό της $update)
-			$dataset[$afm]['personal_info'] = array(
-														'firstname' => ''.$user->firstName,
-														'lastname' => ''.$user->lastName, 
-														'amm' => ''.$amm,
-														'afm' => ''.$afm,
-														'iban' => ''.$user->bankAccount['iban'],
-														'mk' => $mk,
-														'date' => $date_test
-													);
-		}
+			// Πρόσθεσε τα οικονομικά δεδομένα της περιόδου
+			$dataset[$afm][$period_str] = array(
+													'month' => $month,
+													'month_str' => $month_str, // Λεκτική περιγραφή περιόδου
+													'year' => $year, // Έτος μισθοδοτικής περιόδου (σώπα!)
+													'firsthalf' => $first, // Α δεκαπενθήμερο
+													'secondhalf' => $second, // Β δεκαπενθήμερο
+													'days' => $days, // Λεκτική περιγραφή αναδρομικών				
+													'analysis' => $pliromes // Αναλυτικά οι κρατήσεις και τα επιδόματα
+												);
 
-		// Πρόσθεσε τα οικονομικά δεδομένα της περιόδου
-		$dataset[$afm][$period_str] = array(
-												'month' => $month,
-												'month_str' => $month_str, // Λεκτική περιγραφή περιόδου
-												'year' => $year, // Έτος μισθοδοτικής περιόδου (σώπα!)
-												'firsthalf' => $first, // Α δεκαπενθήμερο
-												'secondhalf' => $second, // Β δεκαπενθήμερο
-												'days' => $days, // Λεκτική περιγραφή αναδρομικών				
-												'analysis' => $pliromes // Αναλυτικά οι κρατήσεις και τα επιδόματα
-											);
+			// dump($dataset[$afm][$period_str]); die();
+			
+		 } // Τέλος "Για κάθε εργαζόμενο"
 
-		// dump($dataset[$afm][$period_str]); die();
-		
-	 } // Τέλος "Για κάθε εργαζόμενο"
+	}// Τέλος "Για κάθε οργανισμό"
 
 		// Απελευθέρωση μνήμης
 		unset($xml); 
