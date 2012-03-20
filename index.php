@@ -146,7 +146,7 @@ function mo_print_float_menu($periods){
 
 
 function get_html($key, $user){
-	global $name, $code_id, $codes, $analysis;
+	global $name, $code_id, $codes, $analysis, $ranks;
 
 	ob_start();
 
@@ -177,6 +177,13 @@ function get_html($key, $user){
 		
 		</style>
 	';			
+
+
+	$rank = $user['rank'];
+	//dump($rank);
+	//dump($ranks);
+	$category = $user['category'];	
+	if(!empty($rank)) $name .= ' / Βαθμός: ' . $category . ' - ' .$ranks[$rank];
 
 	echo $style;	
 	$tw = 640;				
@@ -246,9 +253,10 @@ function get_html($key, $user){
 
 		// Ακαθάριστες αποδοχές (Βασικός + επιδόματα)
 		$key = 'epidomata';		
+
 		echo '<div style="margin-bottom: 25px;">';
 		echo '<table class="compare" cellpadding="5" cellspacing="0">';
-		echo '<tr><td colspan="2" style="text-align: center; width: '.$lw.'px;"><b>'.$income[$key]['desc'].'</b></td></tr>';
+		echo '<tr><td colspan="2" style="text-align: center; width: '.$lw.'px;"><b>'.$codes[$key]['desc'].'</b></td></tr>';
 		$children = '';
 		foreach($income[$key]['data'] as $code_id => $data){
 			if($data['amount'] != 0){

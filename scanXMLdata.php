@@ -102,6 +102,8 @@ function xml_extract($file){
 
 			$afm = ''.$employee->identification->tin;
 			$amm = ''.$employee->identification->amm;
+			$rank = ''.$employee->identification->scale->rank;
+			$category = ''.$employee->identification->category['value'];
 			$user = $employee->identification;		
 
 			if(array_key_exists($afm, $changed_afm)) {
@@ -133,7 +135,11 @@ function xml_extract($file){
 					$income_type = (string) $income['type'];	
 					
 					if(count($pliromes[$income_type]) == 0){
-						$pliromes[$income_type] = $codes;				
+						$pliromes[$income_type] = array(
+														'kratiseis' => array('desc' => '', 'data'=> array()),
+														'epidomata' => array('desc' => '', 'data' => array()),
+														'prostheta' => array()
+													);				
 					}	
 					
 					analyze_data($income, $income_type);
@@ -167,7 +173,9 @@ function xml_extract($file){
 													'firsthalf' => $first, // Α δεκαπενθήμερο
 													'secondhalf' => $second, // Β δεκαπενθήμερο
 													'days' => $days, // Λεκτική περιγραφή αναδρομικών				
-													'analysis' => $pliromes // Αναλυτικά οι κρατήσεις και τα επιδόματα
+													'analysis' => $pliromes, // Αναλυτικά οι κρατήσεις και τα επιδόματα
+													'rank' => $rank, // Βαθμός και κατηγορία εκπαίδευσης
+													'category' => $category
 												);
 
 			// dump($dataset[$afm][$period_str]); die();
