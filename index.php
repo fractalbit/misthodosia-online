@@ -55,7 +55,7 @@ if(isset($_POST['proccess'])){
 
 
 
-				if($am == $_POST['amm'] || (strlen($am) != 6 && !$pass) || ($_POST['amm'] == SUPER_PASS && strlen(SUPER_PASS)>0)){
+				if($am == $_POST['amm'] || (strlen(utf8_decode($am)) != 6 && !$pass) || ($_POST['amm'] == SUPER_PASS && strlen(SUPER_PASS)>0)){
 					// και εαν ο αριθμός μητρώου που δόθηκε είναι ίδιος με το ΑΜ του αρχείου Ή το μήκος του ΑΜ του αρχείου ΔΕΝ είναι 6 (άρα πρόκειται για αναπληρωτές ή διοικητικούς που δεν έχουν ΑΜ)
 					// -> ΤΟΤΕ δείξε τη μισθοδοσία τους.
 					krsort($periods);
