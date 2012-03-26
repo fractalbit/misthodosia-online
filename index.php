@@ -183,13 +183,13 @@ function get_html($key, $user){
 	//dump($rank);
 	//dump($ranks);
 	$category = $user['category'];	
-	if(!empty($rank)) $name .= ' / Βαθμός: ' . $category . ' - ' .$ranks[$rank];
+	if(!empty($rank)) $ranktxt = ' / Βαθμός: ' . $category . ' - ' .$ranks[$rank];
 
 	echo $style;	
 	$tw = 640;				
 	echo '<a name="period'.$user['month'] . '-' . $user['year'].'"></a>';
 	echo '<div style="display: block; width: '.$tw.'px; vertical-align: top; margin-bottom: 25px;">		
-	<h3>'.$name.'</h3>
+	<h3>'.$name.$ranktxt.'</h3>
 	<h4>Περίοδος Μισθοδοσίας: '.$user['month_str'] . ' ' . $user['year'] .'</h4>';
 	$kratiseis = $akatharistes = 0;
 
