@@ -18,33 +18,26 @@
 */
 
 /* *********** ΓΕΝΙΚΗ ΠΕΡΙΓΡΑΦΗ ΛΕΙΤΟΥΡΓΙΑΣ ΑΡΧΕΙΟΥ *********** */
-// Το αρχείο αυτό γίνεται include στα αρχεία της εφαρμογής και φορτώνει όλα τα απαραίτητα αρχεία για τη λειτουργία της
+// Το αρχείο αυτό εμφανίζει λίστα με όλους τους μισθοδοτούμενους και επιτρέπει αναζήτηση με autocomplete...
+// μόνο αν κάποιος είναι συνδεδεμένος ως διαχειριστής.
 /* *********** ΤΕΛΟΣ ΓΕΝΙΚΗΣ ΠΕΡΙΓΡΑΦΗΣ *********** */
 
-// error_reporting(E_ALL); ini_set('display_errors', '1');
 
+include_once('./init.inc.php');
 
-include('./functions.inc.php');
-include('./config.inc.php');
-include('./efpp.class.php');
+if(admin_configured()){
 
+    if($admin->check_logged_in()){        
+        $file = urldecode($_GET['file']);
+        //echo $file;
+        unlink($file);
 
-include('./ranks.php');
-include('./eapCodes.php');
-include('./passwords.php');
+        $message = date('d/m/Y H:i:s', time()) . ' - Ο διαχειριστής διέγραψε το αρχείο ' . mb_convert_encoding($file, 'UTF-8', 'ISO-8859-7');
+        savelog($message);
+    }else{
+        echo $admin->message;
+    }
 
-$session_path = trailingslashit(APP_DIR) . 'session_data';
-if(!empty($session_path)) fSession::setPath($session_path);
-fSession::setLength('1 hour');
-fSession::open();
-
-fAuthorization::setAuthLevels(
-    array(
-        'admin' => 100,
-        // 'user'  => 50,
-        // 'guest' => 25
-    )
-);
-
-
-$admin = new efpp_user(SUPER_USER, SUPER_PASS, false);
+}else{
+    echo $admin->message;
+}

@@ -30,32 +30,69 @@ include_once('./init.inc.php');
 
 print_header();
 
-$f = 0;
-$dataset = array();
-foreach(bfglob(XML_DIR, '*.xml', NULL, 10) as $file){
-// Διαβάζει ένα-ένα τα αρχεία xml που υπάρχουν στο φάκελο 'XML_DIR'
-// και οργανώνει τα οικονομικά στοιχεία ανα ΑΦΜ (μισθοδοτούμενο) στον πίνακα $dataset
-	xml_extract($file);	
-	echo 'Φορτώθηκε και αναλύθηκε το αρχείο ' . mb_convert_encoding($file, 'UTF-8', 'ISO-8859-7') . '<br />';
-	$f++;
-}
+if(admin_configured()){
 
-if($f == 0){
-	echo '<h3>Δεν βρέθηκε κανένα έγκυρο αρχείο XML. Παρακαλούμε διαβάστε την τεκμηρίωση: <a href="http://dide.arg.sch.gr/grmixan/misthodosia-online-app/">http://dide.arg.sch.gr/grmixan/misthodosia-online-app/</a></h3>';
+    if($admin->check_logged_in()){
+
+		$f = 0;
+		$dataset = array();
+		$analyzed = array();
+		foreach(bfglob(XML_DIR, '*.xml', NULL, 10) as $file){
+		// Διαβάζει ένα-ένα τα αρχεία xml που υπάρχουν στο φάκελο 'XML_DIR'
+		// και οργανώνει τα οικονομικά στοιχεία ανα ΑΦΜ (μισθοδοτούμενο) στον πίνακα $dataset
+			xml_extract($file);	
+			$filename = end(explode('/', $file));
+			$filename_with_time = $filename . '_' . filemtime($file);
+			$analyzed[$filename_with_time] = time();
+			echo 'Φορτώθηκε και αναλύθηκε το αρχείο ' . mb_convert_encoding($file, 'UTF-8', 'ISO-8859-7') . '<br />';
+			$f++;
+		}
+
+		save_file(APP_DIR . '/scanned_files.php', $analyzed);
+
+		if($f == 0){
+			echo '<h3>Δεν βρέθηκε κανένα έγκυρο αρχείο XML. Παρακαλούμε διαβάστε την τεκμηρίωση: <a href="http://dide.arg.sch.gr/grmixan/misthodosia-online-app/">http://dide.arg.sch.gr/grmixan/misthodosia-online-app/</a></h3>';
+		}else{
+			echo '<br />Αναλύθηκαν <strong>' . $f . '</strong> αρχεία XML. ';
+		}
+
+
+		$i = 0;
+		$mithodotoumenoi = array();
+		foreach($dataset as $afm => $data){
+		// Αποθηκεύει ένα αρχείο για κάθε μισθοδοτούμενο με τα οικονομικά του στοιχεία στον φάκελο 'USER_DIR'
+			$filename = USER_DIR . '/' . $afm . '.php';
+			save_file($filename, $data); // functions.inc.php
+			$i++;	
+
+			$name = $data['personal_info']['lastname'] . ' ' . $data['personal_info']['firstname'];
+			$misthodotoumenoi[] = array('name' => $name, 'afm' => $afm);
+		}
+
+		$txt = '';
+		if($i > 0) $txt = 'Αποθηκευτηκαν στοιχεία για <strong>'. $i . '</strong> μισθοδοτούμενους.';
+		echo $txt;
+
+		sort($misthodotoumenoi);
+		save_file(USER_DIR . '/all.php', $misthodotoumenoi);
+
+		savelog(time(), 'scan_times.txt');
+		$message = date('d/m/Y H:i:s', time()) . ' - Αναλύθηκαν ' . $f . ' XML αρχεία. ' . $txt;
+		savelog($message);
+
+		echo '<br/><br/><a href="manage_xml.php" class="button">Επιστροφή στη Διαχείριση Αρχείων</a>';
+
+		unset($dataset);
+
 }else{
-	echo '<br />Αναλύθηκαν <strong>' . $f . '</strong> αρχεία XML. ';
+        echo '<div class="error">'.$admin->message.'</div>';
+        echo $admin->show_login_form();
+    }
+
+}else{
+    echo $admin->message;
 }
 
-$i == 0;
-foreach($dataset as $afm => $data){
-// Αποθηκεύει ένα αρχείο για κάθε μισθοδοτούμενο με τα οικονομικά του στοιχεία στον φάκελο 'USER_DIR'
-	$filename = USER_DIR . '/' . $afm . '.php';
-	save_file($filename, $data); // functions.inc.php
-	$i++;	
-}
-if($i > 0) echo 'Αποθηκευτηκαν στοιχεία για <strong>'. $i . '</strong> μισθοδοτούμενους.';
-
-unset($dataset);
 
 print_footer();
 
@@ -266,13 +303,14 @@ function days_diff($end, $start, $string = TRUE){
 
 function bfglob($path, $pattern = '*', $flags = 0, $depth = 0) {
 	// Use glob to also scan in subdirectories
+	define(DIRECTORY_SEP, '/');
     $matches = array();
-    $folders = array(rtrim($path, DIRECTORY_SEPARATOR));
+    $folders = array(rtrim($path, DIRECTORY_SEP));
     
     while($folder = array_shift($folders)) {
-        $matches = array_merge($matches, glob($folder.DIRECTORY_SEPARATOR.$pattern, $flags));
+        $matches = array_merge($matches, glob($folder.DIRECTORY_SEP.$pattern, $flags));
         if($depth != 0) {
-            $moreFolders = glob($folder.DIRECTORY_SEPARATOR.'*', GLOB_ONLYDIR);
+            $moreFolders = glob($folder.DIRECTORY_SEP.'*', GLOB_ONLYDIR);
             $depth   = ($depth < -1) ? -1: $depth + count($moreFolders) - 2;
             $folders = array_merge($folders, $moreFolders);
         }

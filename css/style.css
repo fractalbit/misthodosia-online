@@ -96,3 +96,206 @@ div.floating-menu a, div.floating-menu h3 {
 	padding: 6px 0;
 	margin: 0px;
 }
+
+ul#user-list {
+	margin: 0;
+	margin-top: 20px;
+	padding: 0;
+}
+
+ul#user-list li {
+	list-style-type: none;
+	padding: 5px 0;
+}
+
+ul#user-list li a {
+	font-weight: bold;
+	text-decoration: none;
+}
+
+
+div.error {
+	color: red;
+	font-size: 14px;
+}
+
+.error {
+	color: red;
+}
+
+#userlist-container input {
+	width: 250px;
+	height: 26px;
+	line-height: 26px;
+	padding-left: 10px;
+	font-size: 18px;
+}
+
+#userlist-container label {
+	width: 260px;
+	text-align: center;
+	font-weight: bold;
+	margin: 20px 0 5px 0;
+	font-size: 16px;
+}
+
+#efpp_form_container label {
+	width: 140px;
+	text-align: right;
+}
+
+#efpp_form_container input {
+	width: 160px;
+}
+
+#efpp_form_container input[type=submit] {
+	width: 320px;
+	height: 50px;
+}
+
+.scanned {
+	color: green;
+}
+
+.notscanned {
+	color: red;
+}
+
+#xmlfiles-container {
+	width: 650px;
+	float: left;
+}
+
+#xmlfiles-container ul li {
+	font-size: 14px;
+	padding: 5px 0;
+}
+
+#xmlfiles-container ul li span {
+	color: #666;
+	font-size: 12px;
+}
+
+#xmlfiles-container ul {
+	padding: 0;
+	margin: 0;
+}
+
+#xmlfiles-container ul li {
+	padding: 5px 0;
+	list-style-type: none;
+}
+
+.info_box {
+	float: right;
+	border: 2px solid #666;
+	padding: 15px;
+	width: 250px;
+	background: #fff;
+	margin-bottom: 20px;
+	clear: right;
+}
+
+.red {
+	width: 218px;
+	border: 2px solid red;
+	background: url(../img/error-bg.png) center left no-repeat;
+	padding-left: 47px;
+}
+
+.green {
+	width: 218px;
+	border: 2px solid green;
+	background: url(../img/success-bg.png) center left no-repeat;
+	padding-left: 47px;
+}
+
+#log-container .box{
+	border: 1px solid #333;
+	background: #e2e2e2;
+	padding: 10px;
+	float: left;
+	font-size: 11px;
+}
+
+#log-container #user-log {
+	width: 595px;
+	margin-right: 20px;
+}
+
+#log-container #admin-log {
+	width: 300px;
+}
+
+#xmlfiles-container #upload-form {
+	background: #e2e2e2;
+	border: 1px solid #666;
+	padding: 10px;
+}
+
+#xmlfiles-container #upload-form label {
+	margin:0;
+}
+
+#xmlfiles-container #upload-form div {
+	margin-top: 10px;
+	font-size: 11px;
+}
+
+
+#admin-menu-container {
+	padding: 5px 0;
+	background: #e2e2e2;
+	/*border-bottom: 1px solid #333;*/
+	margin-bottom: 20px;
+}
+
+.left{
+	float: left;
+	width: 600px;
+}
+
+.right{
+	float: right;
+	width: 300px;
+	text-align: right;
+}
+
+ul#admin-menu {
+	padding: 0;
+	margin: 0;
+}
+
+ul#admin-menu li {
+	list-style-type: none;
+	float: left;
+	
+}
+
+ul#admin-menu li a {
+	display: inline-block;
+	text-decoration: none;
+	padding: 4px 8px;
+	margin: 0 5px;
+	margin-top: 5px;
+	border-bottom: 5px solid #e2e2e2;
+}
+
+ul#admin-menu li.current a, ul#admin-menu li a:hover {
+	border-bottom: 5px solid #666;
+}
+
+#efpp_logged_in {
+	line-height: 35px;
+	padding-right: 15px;
+}
+
+#header {
+	margin-bottom: 20px;
+	border-bottom: 1px solid #ccc;
+}
+
+#header .right {
+	padding-top: 35px;
+	padding-right: 15px;
+}

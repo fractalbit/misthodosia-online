@@ -49,23 +49,90 @@ function rand_str($length = 10) {
     return $string;
 }
 
+function savelog($message, $file = 'admin_log.txt'){
+    $file = APP_DIR . '/' . $file; 
+    $log = fopen($file, 'a+');
+
+    $message = $message . "\r\n" ;
+    fwrite($log, $message);
+    fclose($log);
+}
+
+function get_admin_menu(){
+    $menu = array(
+                    array('name' => 'Αρχική', 'url' => 'index.php'),
+                    array('name' => 'Μισθοδοτούμενοι', 'url' => 'list_users.php'),
+                    array('name' => 'Διαχείριση XML', 'url' => 'manage_xml.php'),
+                    array('name' => 'Αρχείο καταγραφής', 'url' => 'view_log.php'),
+                    array('name' => 'Τεκμηρίωση', 'url' => 'https://github.com/fractalbit/misthodosia-online/blob/master/readme.md', 'target' => '_blank'),
+                );
+
+    return $menu;
+}
+
+function print_admin_menu(){
+    global $admin;
+
+    $menu = get_admin_menu();
+    $current_script = end(explode('/', $_SERVER['PHP_SELF']));
+    ?>
+    <div id="admin-menu-container" class="clearfix">
+        <div class="left">
+            <ul id="admin-menu" class="clearfix">
+                <?php
+                    foreach($menu as $item){
+                        $class = '';
+                        if($item['url'] == $current_script) $class = 'class="current"';
+                        ?>
+                        <li <?php echo $class; ?>><a href="<?php echo $item['url']; ?>" <?php if(isset($item['target'])) echo 'target="_blank"'; ?>><?php echo $item['name']; ?></a></li>
+                        <?php
+                    }
+                ?>
+            </ul>
+        </div>
+        <div class="right">
+            <?php echo $admin->message; ?>
+        </div>
+    </div>
+    <?php
+}
+
+
 function print_header(){
-	echo '
+    global $admin;
+	?>
 	<!doctype html>
 	<html lang="el">
 	<head>
 		<meta charset="utf-8">
-		<title>Μισθοδοσία online - '.ORG_TITLE.'</title>
+		<title>Μισθοδοσία online - <?php echo ORG_TITLE; ?></title>
 
 		<link rel="stylesheet" href="css/reset.css">
 		<link rel="stylesheet" href="css/style.css">
+
+        <!-- load google hosted jquery with local fallback -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/jquery-1.7.1.min.js"><\/script>')</script>
+
+        <script src="js/jquery.slideto.js"></script>
+        <script src="js/script.js"></script>
 	</head>
 	<body>
-	<div class="container">';
+	<div class="container">
 
-	//if(!empty(ORG_TITLE) && !empty(ORG_URL))
-		echo '<h2><a href="'.ORG_URL.'" class="button">'.ORG_TITLE.'</a> &raquo; <a href="index.php" class="button">Μισθοδοσία online</a></h2><hr /><br />';
+    <?php
+        $txt = '';
+        if(!$admin->check_logged_in()){
+            $txt = '<a href="list_users.php">Διαχείριση</a>';
+        }
+		echo '<div id="header" class="clearfix">
+                <div class="left"><h2><a href="'.ORG_URL.'" class="button">'.ORG_TITLE.'</a> &raquo; <a href="index.php" class="button">Μισθοδοσία online</a></h2></div>
+                <div class="right subtle">'.$txt.'</div>
+              </div>';
 
+        if($admin->check_logged_in()){
+            print_admin_menu();
+        }
 
 }
 
@@ -79,10 +146,14 @@ function print_footer(){
 	</html>';
 }
 
-function current_dir(){
-	$temp = explode('/', dirname(__FILE__));
-	$dir = array_pop($temp);
+function full_dir(){
+    return dirname(__FILE__);
+}
 
+function current_dir(){
+	$temp = explode(DIRECTORY_SEPARATOR, dirname(__FILE__));
+	$dir = array_pop($temp);
+    //dump($dir);
 	return $dir;
 }
 
@@ -170,4 +241,38 @@ function do_dump(&$var, $var_name = NULL, $indent = NULL, $reference = NULL)
 
         $var = $var[$keyvar];
     }
+}
+
+/**
+ * Appends a trailing slash.
+ *
+ * Will remove trailing slash if it exists already before adding a trailing
+ * slash. This prevents double slashing a string or path.
+ *
+ * The primary use of this is for paths and thus should be used for paths. It is
+ * not restricted to paths and offers no specific path support.
+ *
+ * @since 1.2.0
+ * @uses untrailingslashit() Unslashes string if it was slashed already.
+ *
+ * @param string $string What to add the trailing slash to.
+ * @return string String with trailing slash added.
+ */
+function trailingslashit($string) {
+    return untrailingslashit($string) . '/';
+}
+
+/**
+ * Removes trailing slash if it exists.
+ *
+ * The primary use of this is for paths and thus should be used for paths. It is
+ * not restricted to paths and offers no specific path support.
+ *
+ * @since 2.2.0
+ *
+ * @param string $string What to remove the trailing slash from.
+ * @return string String without the trailing slash.
+ */
+function untrailingslashit($string) {
+    return rtrim($string, '/');
 }
