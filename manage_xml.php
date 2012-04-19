@@ -78,7 +78,8 @@ if(admin_configured()){
             
             $time = filemtime($file);
             $period = get_period_from_xml($file);
-            $xml_files[$time] = array('filename' => $file, 'period' => $period);
+            $period_str = $period['period_str'];
+            $xml_files[$period_str] = array('filename' => $file, 'period' => $period, 'time' => $time);
             //echo $name . ' <span>Ανέβηκε στις '.date('d/m/Y H:i', filemtime($file)).'</span><br />';
         }
 
@@ -101,7 +102,8 @@ if(admin_configured()){
 
         echo '<h2>Λίστα XML αρχείων</h2><ul>';
         $red_flag = false;
-        foreach($xml_files as $time => $data){
+        foreach($xml_files as $p_str => $data){
+            $time = $data['time'];
             $name = end(explode('/', $data['filename']));
             $period_id = $data['period']['month'] . ' ' . $data['period']['year'];
             $file_and_time = $name .'_'. $time;
@@ -183,5 +185,5 @@ function get_period_from_xml($file){
     // Δημιουργία μοναδικού αλφαρηθμιτικού που χρησιμεύει ως αναγνωριστικό περιόδου μισθοδοσίας και ταξινομείται σωστά χρονολογικά
     $period_str = $period['year'] . '_' . $period['month'] . '_' . $xml->header->transaction->periodType['value'];
 
-    return array('period_id' => $perio_str, 'month' => $month_str, 'year' => $year);
+    return array('period_str' => $period_str, 'month' => $month_str, 'year' => $year);
 }
