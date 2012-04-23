@@ -23,6 +23,7 @@
 
 // error_reporting(E_ALL); ini_set('display_errors', '1');
 
+if(!file_exists('config.inc.php')) die('Please read <a href="https://github.com/fractalbit/misthodosia-online/blob/master/readme.md">the documentation</a>');
 
 include('./functions.inc.php');
 include('./config.inc.php');

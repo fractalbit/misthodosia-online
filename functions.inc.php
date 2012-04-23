@@ -64,7 +64,7 @@ function get_admin_menu(){
                     array('name' => 'Μισθοδοτούμενοι', 'url' => 'list_users.php'),
                     array('name' => 'Διαχείριση XML', 'url' => 'manage_xml.php'),
                     array('name' => 'Αρχείο καταγραφής', 'url' => 'view_log.php'),
-                    array('name' => 'Τεκμηρίωση', 'url' => 'https://github.com/fractalbit/misthodosia-online/blob/master/readme.md', 'target' => '_blank'),
+                    //array('name' => 'Τεκμηρίωση', 'url' => 'https://github.com/fractalbit/misthodosia-online/blob/master/readme.md', 'target' => '_blank'),
                 );
 
     return $menu;

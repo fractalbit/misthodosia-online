@@ -299,3 +299,15 @@ ul#admin-menu li.current a, ul#admin-menu li a:hover {
 	padding-top: 35px;
 	padding-right: 15px;
 }
+
+#efpp_form_container {
+	margin-top: 20px;
+	padding: 20px;
+	background: #333;
+	color: #fff;
+}
+
+#efpp_form_container label {
+	font-size: 16px;
+	font-weight: normal;
+}
