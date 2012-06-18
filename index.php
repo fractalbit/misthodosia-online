@@ -62,9 +62,9 @@ if(isset($_POST['proccess']) || isset($_GET['afm'])){
 					$pass = TRUE;
 				} 
 
+                if(!isset($am_length)) $am_length = 6;
 
-
-				if($am == $_POST['amm'] || (strlen(utf8_decode($am)) != 6 && !$pass) || ($_POST['amm'] == SUPER_PASS && strlen(SUPER_PASS)>0) || $admin->check_logged_in()){
+				if($am == $_POST['amm'] || (strlen(utf8_decode($am)) != $am_length && !$pass) || ($_POST['amm'] == SUPER_PASS && strlen(SUPER_PASS)>0) || $admin->check_logged_in()){
 					// και εαν ο αριθμός μητρώου που δόθηκε είναι ίδιος με το ΑΜ του αρχείου Ή το μήκος του ΑΜ του αρχείου ΔΕΝ είναι 6 (άρα πρόκειται για αναπληρωτές ή διοικητικούς που δεν έχουν ΑΜ)
 					// -> ΤΟΤΕ δείξε τη μισθοδοσία τους.
 					
@@ -143,7 +143,7 @@ if(isset($_POST['proccess']) || isset($_GET['afm'])){
 	echo '
 		<div class="information box" style="margin-bottom: 30px;">
 			
-			Σημείωση: Όσοι δεν έχουν 6ψήφιο αριθμό μητρώου (π.χ. αναπληρωτές), πρέπει να αφήσουν το σχετικό πεδίο ασυμπλήρωτο.
+			Σημείωση: Όσοι δεν έχουν '.$am_length.'ψήφιο αριθμό μητρώου (π.χ. αναπληρωτές), πρέπει να αφήσουν το σχετικό πεδίο ασυμπλήρωτο.
 		</div>';
 	//<b>Απρίλιος 2011 - Αναδρομικά</b> και ο Μάρτιος 2011 (τακτική και αναδρομικά) για όσους μεταπληρώνονται (ΙΔΑΧ και αναπληρωτές)
 
