@@ -102,6 +102,7 @@ if(admin_configured()){
 
         echo '<h2>Λίστα XML αρχείων</h2><ul>';
         $red_flag = false;
+        $i = 1;
         foreach($xml_files as $p_str => $data){
             $time = $data['time'];
             $name = end(explode('/', $data['filename']));
@@ -113,11 +114,15 @@ if(admin_configured()){
                 $class='notscanned';
                 $red_flag = true;
             }
-            echo '<li class="'.$class.'">' . $period_id . ' <span>(' .mb_convert_encoding($name, 'UTF-8', 'ISO-8859-7') . ') - Ανέβηκε στις '.date('d/m/Y H:i', $time).'</span> - <a href="file='.urlencode($data['filename']).'" class="delete confirm" rel="Είστε σίγουρος ότι θέλετε να διαγράψετε αυτό το αρχείο;">Διαγραφή</a></li>';
+            echo '<li class="'.$class.'">' . $i . '. ' . $period_id . ' <span>(' .mb_convert_encoding($name, 'UTF-8', 'ISO-8859-7') . ') - Ανέβηκε στις '.date('d/m/Y H:i', $time).'</span> - <a href="file='.urlencode($data['filename']).'" class="delete confirm" rel="Είστε σίγουρος ότι θέλετε να διαγράψετε αυτό το αρχείο;">Διαγραφή</a></li>';
+            $i++;
         }        
         echo '</ul>';
 
         echo '</div>';
+
+        // dump(count($xml_files));
+        // dump(count($analyzed));
 
         if($red_flag || count($xml_files) != count($analyzed)){
             echo '<div class="info_box red">Ο πίνακας αναλυθέντων αρχείων δε συμφωνεί με τα αρχεία που υπάρχουν στο φάκελο XMLDATA. Θα πρέπει να τρέξετε την... <br /><br /><a class="button" href="scanXMLdata.php" target="_blank">Ανάλυση αρχείων</a></div>';
@@ -155,7 +160,7 @@ print_footer();
 
 
 function get_period_from_xml($file){
-// Διαβάζει το αρχείο $file και τα οργανώνει ανα ΑΦΜ (μισθοδοτούμενο) στον πίνακα $dataset (global)
+// Διαβάζει ένα αρχείο XML και επιστρέφει πληροφορίες για τη μισθοδοτική περίοδο που αυτό αφορά
     global $changed_afm, $pliromes, $codes, $dataset, $months, $first, $second;
     
     $xmlstr = file_get_contents($file);
@@ -182,8 +187,9 @@ function get_period_from_xml($file){
     
     $date_test = strtotime('01-'.$m.'-'.$year); // Δημιουργία timestamp για τη μισθοδοτική περίοδο
 
-    // Δημιουργία μοναδικού αλφαρηθμιτικού που χρησιμεύει ως αναγνωριστικό περιόδου μισθοδοσίας και ταξινομείται σωστά χρονολογικά
-    $period_str = $period['year'] . '_' . $period['month'] . '_' . $xml->header->transaction->periodType['value'];
+    // Δημιουργία μοναδικού* αλφαρηθμιτικού που χρησιμεύει ως αναγνωριστικό περιόδου μισθοδοσίας και ταξινομείται σωστά χρονολογικά
+    $period_str = $period['year'] . '_' . $period['month'] . '_' . $xml->header->transaction->periodType['value'] . '_' . fCryptography::randomString(8);
+    // Προστέθηκε ένα τυχαίο string στο τέλος για να ξεχωρίζουν αρχεία που αφορούν στην ίδια περίοδο
 
     return array('period_str' => $period_str, 'month' => $month_str, 'year' => $year);
 }
