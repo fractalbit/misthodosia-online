@@ -67,6 +67,14 @@ $(function() {
 		});
 	});
 
+	$('.confirm_cleanup').click(function(event){
+		var message = $(this).attr('rel');
+		if(!confirm(message)){
+			event.preventDefault();
+			return;	
+		} 
+	});
+
 		// Let's handle some AJAX requests, shall we?	
 	$('.delete').click(function(event){
 		event.preventDefault();

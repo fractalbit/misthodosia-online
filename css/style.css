@@ -227,6 +227,13 @@ div.error {
 	width: 300px;
 }
 
+.cleanup {
+	border-bottom: 1px dashed red;
+	font-size: 12px;
+	margin-bottom: 10px;
+	padding-bottom: 5px;
+}
+
 #xmlfiles-container #upload-form {
 	background: #e2e2e2;
 	border: 1px solid #666;
@@ -310,4 +317,4 @@ ul#admin-menu li.current a, ul#admin-menu li a:hover {
 #efpp_form_container label {
 	font-size: 16px;
 	font-weight: normal;
-}
+};
