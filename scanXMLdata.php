@@ -105,7 +105,8 @@ function xml_extract($file){
 	$xml = new SimpleXMLElement($xmlstr); // Διαβάζει το xml αρχείο σε μορφή αντικειμένου (συνάρτηση ενσωματωμένη στην PHP).
 
 	$period = $xml->header->transaction->period;
-	$period['month'] = str_replace('0', '', $period['month']); // Remove leading zero from months
+	//$period['month'] = str_replace('0', '', $period['month']); // Remove leading zero from months - This was bugged, it would also remove zero from October (10)
+	$period['month'] = ltrim($period['month'], '0'); // Remove leading zero from months
 	if($period['month'] < 10) $period['month'] = '0'.$period['month']; // Pad month numbers with zero
 	// The 2 lines above ensure compatibility with both ex. '04' and '4' as month in the xml
 
