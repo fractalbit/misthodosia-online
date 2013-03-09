@@ -56,15 +56,19 @@ $(function() {
 		
 	});
 
-	$('.scroll-link').click(function(event){
+/*	$('.scroll-link').click(function(event){
 		event.preventDefault();
 
 		var target = '#' + $(this).attr('href');
-
+		console.log(target);
 		$(target).slideto({
 		  highlight: false,
 		  slide_duration: 600
 		});
+	});*/
+
+	$('.scroll-link').slideto({
+		speed  : 'slow'
 	});
 
 	$('.confirm_cleanup').click(function(event){

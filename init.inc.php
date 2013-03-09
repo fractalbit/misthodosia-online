@@ -32,7 +32,11 @@ include('./efpp.class.php');
 
 include('./ranks.php');
 include('./eapCodes.php');
-include('./passwords.php');
+if(file_exists('./passwords.php')){
+    include('./passwords.php');
+}else{
+    $protected = array();
+}
 
 $session_path = trailingslashit(APP_DIR) . 'session_data';
 if(!empty($session_path)) fSession::setPath($session_path);

@@ -25,7 +25,7 @@
 function save_file($filename, $data){
  	$data = serialize($data); 	
  	$file = fopen($filename, 'w');
- 	$data = '<?php $person = \''. $data . '\';';
+ 	$data = '<?php $person = \''. addslashes($data) . '\';';
  	fwrite($file, $data);
  	fclose($file);
  	unset($data);
@@ -34,7 +34,7 @@ function save_file($filename, $data){
  function load_file($file){
  	//$contents = file_get_contents($file);
  	include($file);
- 	$data = unserialize($person);
+ 	$data = unserialize(stripslashes($person));
 
  	return $data;
  }
@@ -114,7 +114,7 @@ function print_header(){
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/jquery-1.7.1.min.js"><\/script>')</script>
 
-        <script src="js/jquery.slideto.js"></script>
+        <script src="js/jquery.slideto.v1.1.js"></script>
         <script src="js/script.js"></script>
 	</head>
 	<body>

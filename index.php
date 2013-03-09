@@ -165,7 +165,7 @@ function mo_print_float_menu($periods){
 	echo '<h3>Γρήγορη μετάβαση</h3>';
 	foreach ($periods as $key => $data) {
 		$name = $data['month_str'] . ' ' . $data['year'];
-		$link = 'period' . $data['month'] . '-' . $data['year'];
+		$link = '#period' . $data['month'] . '-' . $data['year'];
 		echo '<a href="'.$link.'" class="scroll-link">'.$name.'</a>';
 	}
 	echo '</div>';
@@ -216,7 +216,8 @@ function get_html($key, $user){
     echo $style;    
     $tw = 640;              
    // echo '<a name="period'.$user['month'] . '-' . $user['year'].'"></a>';
-    echo '<div id="period'.$user['month'] . '-' . $user['year'].'" style="display: block; width: '.$tw.'px; vertical-align: top; margin-bottom: 25px;">     
+    echo '<a name="period'.$user['month'] . '-' . $user['year'].'"></a>';
+    echo '<div style="display: block; width: '.$tw.'px; vertical-align: top; margin-bottom: 25px;">     
     <h3>'.$name.$ranktxt.'</h3>
     <h4>Περίοδος Μισθοδοσίας: '.$user['month_str'] . ' ' . $user['year'] .'</h4>';
     $kratiseis = $akatharistes = 0;
