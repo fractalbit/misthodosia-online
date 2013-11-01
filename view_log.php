@@ -52,7 +52,7 @@ if(admin_configured()){
             <div id="user-log" class="box">
                 <h3>Ενέργειες χρηστών</h3>
                 <div class="cleanup">
-                    <form method="post" action="<?= $_SERVER['PHP_SELF'] ?>">
+                    <form method="post" action="<?php echo  $_SERVER['PHP_SELF'] ?>">
                         Κράτα μόνο τις 
                         <select name="user_lines" id="">
                             <option value="0">0</option>
@@ -72,7 +72,7 @@ if(admin_configured()){
             <div id="admin-log" class="box">
                 <h3>Ενέργειες διαχειριστή</h3>
                 <div class="cleanup">
-                    <form method="post" action="<?= $_SERVER['PHP_SELF'] ?>">
+                    <form method="post" action="<?php echo  $_SERVER['PHP_SELF'] ?>">
                         Κράτα μόνο τις 
                         <select name="admin_lines" id="">
                             <option value="0">0</option>
@@ -86,7 +86,7 @@ if(admin_configured()){
                 </div>
                 <?php print_log_file('admin_log.txt'); ?>
             </div>
-        <?
+        <?php
     }else{
         echo '<div class="error">'.$admin->message.'</div>';
         echo $admin->show_login_form();

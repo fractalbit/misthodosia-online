@@ -91,17 +91,17 @@ class efpp_user {
         ?>
             <div id="efpp_form_container">
                 <form id="efpp_form" class="efpp_form" name="efpp_form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" />
-                    <p id="efpp_login_prompt"><?= $efpp_txt['Please login']?></p>
+                    <p id="efpp_login_prompt"><?php echo  $efpp_txt['Please login']?></p>
                     <p id="efpp_username_container">
-                        <label for="efpp_username"><?= $efpp_txt['username'] ?></label> 
+                        <label for="efpp_username"><?php echo  $efpp_txt['username'] ?></label> 
                         <input name="efpp_username" id="efpp_username" type="text"/> 
                     </p>
                     <p id="efpp_password_container">
-                        <label for="efpp_password"><?= $efpp_txt['password'] ?></label> 
+                        <label for="efpp_password"><?php echo  $efpp_txt['password'] ?></label> 
                         <input name="efpp_password" id="efpp_password" type="password" /> 
                     </p>
                     <p id="efpp_button_container">  
-                        <input type="submit" name="efpp_login_button" id="efpp_login_button" value="<?= $efpp_txt['Login'] ?>" class="btn primary large" />
+                        <input type="submit" name="efpp_login_button" id="efpp_login_button" value="<?php echo  $efpp_txt['Login'] ?>" class="btn primary large" />
                     <input type="hidden" name="efpp_action" value="login" />
                 </form>
             </div>

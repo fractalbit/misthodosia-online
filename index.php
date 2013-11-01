@@ -166,7 +166,7 @@ function mo_print_float_menu($periods){
 	foreach ($periods as $key => $data) {
 		$name = $data['month_str'] . ' ' . $data['year'];
 		$link = '#period' . $data['month'] . '-' . $data['year'];
-		echo '<a href="'.$link.'" class="scroll-link">'.$name.'</a>';
+		echo '<a href="'.$link.'" class="scrollLink">'.$name.'</a>';
 	}
 	echo '</div>';
 }

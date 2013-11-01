@@ -5,7 +5,15 @@
 /* *********** ΤΕΛΟΣ ΓΕΝΙΚΗΣ ΠΕΡΙΓΡΑΦΗΣ *********** */
 
 include_once('./init.inc.php');
-require_once(TC_PDF_LIB_DIR . '/config/lang/eng.php');
+/*if(file_exists(TC_PDF_LIB_DIR . '/config/tcpdf_config.php')){
+	require_once(TC_PDF_LIB_DIR . '/config/tcpdf_config.php');	
+}elseif(file_exists(TC_PDF_LIB_DIR . '/config/lang/eng.php')){
+	require_once(TC_PDF_LIB_DIR . '/config/lang/eng.php');	
+}else{
+	die('Δεν βρέθηκε το αρχείο ρυθμίσεων για τη βιβλιοθήκη tcpdf');
+}*/
+
+require_once(TC_PDF_LIB_DIR . '/config/tcpdf_config.php');
 require_once(TC_PDF_LIB_DIR . '/tcpdf.php');
 
 $afm = fSession::get('afm');

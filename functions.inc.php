@@ -114,7 +114,7 @@ function print_header(){
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/jquery-1.7.1.min.js"><\/script>')</script>
 
-        <script src="js/jquery.slideto.v1.1.js"></script>
+        <script src="js/jquery.slideto.v1.2.custom.js"></script>
         <script src="js/script.js"></script>
 	</head>
 	<body>
@@ -150,12 +150,19 @@ function full_dir(){
     return dirname(__FILE__);
 }
 
-function current_dir(){
+/*function current_dir(){
 	$temp = explode(DIRECTORY_SEPARATOR, dirname(__FILE__));
 	$dir = array_pop($temp);
     //dump($dir);
 	return $dir;
 }
+*/
+function current_dir()
+{
+    $path = dirname($_SERVER[PHP_SELF]);
+    $position = strrpos($path,'/') + 1;
+    return substr($path,$position);
+} 
 
 
 

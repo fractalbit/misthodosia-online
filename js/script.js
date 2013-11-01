@@ -49,7 +49,7 @@ $(function() {
 			success: function(msg){
 				$('#generating').fadeOut(200);
 				$('#pdf-complete').fadeIn(400);
-				// if(msg != '') alert(msg);
+				if(msg != '') alert(msg);
 				// location.reload();
 			}
 		});
@@ -67,7 +67,7 @@ $(function() {
 		});
 	});*/
 
-	$('.scroll-link').slideto({
+	$('a.scrollLink').slideto({
 		speed  : 'slow'
 	});
 
