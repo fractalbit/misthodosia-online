@@ -28,6 +28,8 @@
 
 include_once('./init.inc.php');
 
+ini_set('memory_limit', '516M'); // ευχαριστώ το "ΤΜΗΜΑ ΜΗΧΑΝΟΓΡΑΦΗΣΗΣ ΔΙΠΕ ΚΑΡΔΙΤΣΑΣ" - mixanografisi@dipe.kar.sch.gr
+
 print_header();
 
 if(admin_configured()){
