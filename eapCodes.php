@@ -35,7 +35,7 @@ $codes = array(	'kratiseis' => array(
 							'4052000' => array('desc' => 'Υγειον. Περίθαλψη', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4013601' => array('desc' => 'ΤΠΔΥ', 'amount_asf' => 0, 'amount_erg' => 0),
 							'3011300' => array('desc' => 'Φόρος', 'amount_asf' => 0, 'amount_erg' => 0),
-							'3089100' => array('desc' => 'Ειδική εισφορά αλληλεγγύης 2012', 'amount_asf' => 0, 'amount_erg' => 0),
+							'3089100' => array('desc' => 'Ειδική εισφορά αλληλεγγύης', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4003101' => array('desc' => 'ΜΠΤΥ', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4003103' => array('desc' => 'ΜΠΤΥ Νεοδιόριστου', 'amount_asf' => 0, 'amount_erg' => 0),
 							'3324300' => array('desc' => 'Απεργία', 'amount_asf' => 0, 'amount_erg' => 0),
@@ -54,6 +54,21 @@ $codes = array(	'kratiseis' => array(
 							'4002100' => array('desc' => 'ΙΚΑ', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4012501' => array('desc' => 'ΤΕΑΔΥ', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4012502' => array('desc' => 'ΤΕΑΔΥ Νεοδιόριστου', 'amount_asf' => 0, 'amount_erg' => 0),
+
+
+							'4012505' => array('desc' => 'Τ.Ε.Α.Δ.Υ - Διαφορά Αποδοχών λόγω Μισθολογικής προαγωγής', 'amount_asf' => 0, 'amount_erg' => 0),
+							'4012507' => array('desc' => 'Δάνειο Τ.Ε.Α.Δ.Υ.', 'amount_asf' => 0, 'amount_erg' => 0),
+							'4003700' => array('desc' => 'Ο.Δ.Δ.Υ', 'amount_asf' => 0, 'amount_erg' => 0),
+							'4059100' => array('desc' => 'Σύλλογος Υπαλλήλων Περιφερειακών Υπηρεσιών Υπουργείου Παιδείας', 'amount_asf' => 0, 'amount_erg' => 0),
+							'4000800' => array('desc' => 'Ενωση Ελλήνων Χημικών', 'amount_asf' => 0, 'amount_erg' => 0),
+							'4014002' => array('desc' => 'Ταμείο Πρόνοιας Προσωπικού ΟΣΕ', 'amount_asf' => 0, 'amount_erg' => 0),
+							'4010400' => array('desc' => 'ΤΑΥΤΕΚΩ (πρώην Τ.Α.Π.ΟΤΕ  Ασθένειας)', 'amount_asf' => 0, 'amount_erg' => 0),
+							'4014001' => array('desc' => 'Ταμείο Πρόνοιας Προσωπικού ΟΣΕ', 'amount_asf' => 0, 'amount_erg' => 0),
+							'4054901' => array('desc' => 'ΤΑΥΤΕΚΩ - ΕΙΣΦΟΡΕΣ ΣΕ ΧΡΗΜΑ (ΤΑΠ-ΟΤΕ)', 'amount_asf' => 0, 'amount_erg' => 0),
+							'4055001' => array('desc' => 'ΤΑΥΤΕΚΩ - ΕΙΣΦΟΡΕΣ ΕΟΠΥΥ (ΤΑΠ-ΟΤΕ)', 'amount_asf' => 0, 'amount_erg' => 0),
+
+
+
 							'4013400' => array('desc' => 'ΤΕΑΧ', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4013500' => array('desc' => 'Δάνειο Παρακαταθηκών', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4027100' => array('desc' => 'ΑΔΕΔΥ', 'amount_asf' => 0, 'amount_erg' => 0),

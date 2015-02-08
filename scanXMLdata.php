@@ -36,6 +36,8 @@ ini_set('memory_limit', '516M'); // ευχαριστώ το "ΤΜΗΜΑ ΜΗΧΑ
 
 print_header();
 
+$unknown_codes = array();
+
 if(admin_configured()){
 
     if($admin->check_logged_in()){
@@ -105,7 +107,7 @@ print_footer();
 
 function xml_extract($file){
 // Διαβάζει το αρχείο $file και τα οργανώνει ανα ΑΦΜ (μισθοδοτούμενο) στον πίνακα $dataset (global)
-	global $changed_afm, $pliromes, $codes, $dataset, $months, $first, $second;
+	global $changed_afm, $pliromes, $dataset, $months, $first, $second, $codes, $unknown_codes;
 	
 	$xmlstr = file_get_contents($file);
 	$xml = new SimpleXMLElement($xmlstr); // Διαβάζει το xml αρχείο σε μορφή αντικειμένου (συνάρτηση ενσωματωμένη στην PHP).
@@ -239,7 +241,7 @@ function xml_extract($file){
 
 
 function analyze_data($income, $income_type){
-	global $pliromes, $payment, $first, $second;
+	global $pliromes, $payment, $first, $second, $unknown_codes, $codes;
 
 	// Εισφορές ασφαλισμένου
 	foreach($income->de as $de){
@@ -253,6 +255,14 @@ function analyze_data($income, $income_type){
 			$pliromes[$income_type]['kratiseis']['data'][$code] = array('desc' => $code, 'amount_asf' => $amount, 'amount_erg' => 0);
 			//die($code);
 		} 
+
+		// Check unknown codes. Disable before pushing to github
+		/*if(!array_key_exists($code, $codes['kratiseis']['data'])){
+			if(!in_array($code, $unknown_codes)) {
+				$unknown_codes[$code] = $code;
+				echo '<hr>' . $code . '<hr>';
+			}
+		}*/
 	}				
 			
 	// Εργοδοτικές εισφορές			
