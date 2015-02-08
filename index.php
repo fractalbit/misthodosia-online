@@ -25,6 +25,7 @@
 
 include_once('./init.inc.php');
 
+$txt = json_decode(file_get_contents(APP_DIR . '/cms/lang.json'), true); // Φόρτωσε το αρχείο γλώσσας
 
 $salt = rand_str(5); 
 fSession::set('salt', $salt);
@@ -32,6 +33,7 @@ fSession::set('afm', trim($_REQUEST['afm']));
 //fSession::close();
 
 print_header();
+
 
 clean_up(); // Delete all .pdf files older than CLEAN_UP_AFTER (config.inc.php)
 
@@ -141,19 +143,15 @@ if(isset($_POST['proccess']) || isset($_GET['afm'])){
 }else{
 
 	echo '
-		<div class="information box" style="margin-bottom: 30px;">
-			
-			Σημείωση: Όσοι δεν έχουν '.$am_length.'ψήφιο αριθμό μητρώου (π.χ. αναπληρωτές), πρέπει να αφήσουν το σχετικό πεδίο ασυμπλήρωτο.
+		<div class="information box" style="margin-bottom: 30px;">			
+			' . $txt['header'] . '
 		</div>';
 	//<b>Απρίλιος 2011 - Αναδρομικά</b> και ο Μάρτιος 2011 (τακτική και αναδρομικά) για όσους μεταπληρώνονται (ΙΔΑΧ και αναπληρωτές)
 
 	print_form();
+
+    if(!empty($txt['footer'])) echo '<div style="margin-top: 20px;">' . $txt['footer'] . '</div>';
 }	
-
-
-echo '<div class="information box" style="margin-top: 30px;">
-
-</div>';
 
 
 print_footer();
@@ -286,8 +284,8 @@ function get_html($key, $user){
         echo '<div style="margin-bottom: 25px;">';
         echo '<table class="compare" cellpadding="5" cellspacing="0">';
         echo '<tr><td colspan="2" style="text-align: center; width: '.$lw.'px;"><b>'.$codes[$key]['desc'].'</b></td></tr>';
-        $children = '';
         foreach($income[$key]['data'] as $code_id => $data){
+            $children = '';
             if($data['amount'] != 0){
                 
                 if($code_id == '0213') $children = get_children($data['amount']);
@@ -463,6 +461,8 @@ function message($title, $content, $type = 'information'){
 }
 
 function print_form($error= 'none'){
+    global $txt;
+
 	if(isset($_POST['afm'])) $temp_afm = $_POST['afm'];
 	if(isset($_POST['amm'])) $temp_amm = $_POST['amm'];
 
@@ -472,12 +472,13 @@ function print_form($error= 'none'){
 
 	echo '
 		<form action="'.$SERVER['PHPSELF'].'" method="post">
-			<div style="margin-bottom: 20px;">Παρακαλούμε εισάγετε ΑΦΜ, Αρ. Μητρώου και πιέστε "Συνέχεια" για να εμφανιστούν τα μισθοδοτικά σας στοιχεία</div>
-			<label>Α.Φ.Μ.: </label><input type="text" name="afm" class="large_input" maxlength="9" style="letter-spacing: 2px; width: 150px; padding: 8px 10px; font-size: 18px; font-weight: bold; font-family: Arial; '.$afm_error.'" value="'.$temp_afm.'" /><br />
-			<label>Αρ. Μητρώου ή κωδικός: </label><input type="password" name="amm" class="large_input" maxlength="20" style="letter-spacing: 2px; width: 150px; padding: 8px 10px; font-size: 18px; font-weight: bold; font-family: Arial; '.$amm_error.'" value="'.$temp_amm.'" /><br />
-			Σημείωση: Όσοι έχουν προστατεύσει το ΑΦΜ τους με κωδικό, θα πρέπει να εισάγουν αυτόν στο πεδίο Αρ. Μητρώου.<br /><br />
+			<div style="margin-bottom: 20px;">' . $txt['login_above'] . '</div>
+			<label>' . $txt['afm_label'] . '</label><input type="text" name="afm" class="large_input" maxlength="9" style="letter-spacing: 2px; width: 150px; padding: 8px 10px; font-size: 18px; font-weight: bold; font-family: Arial; '.$afm_error.'" value="'.$temp_afm.'" /><br />
+			<label>' . $txt['amm_label'] . '</label><input type="password" name="amm" class="large_input" maxlength="20" style="letter-spacing: 2px; width: 150px; padding: 8px 10px; font-size: 18px; font-weight: bold; font-family: Arial; '.$amm_error.'" value="'.$temp_amm.'" /><br />
+			
 			<input type="hidden" name="proccess" />
-			<input type="submit" id="ops_submit" value="Συνέχεια" style="padding: 10px 20px; font-size: 16px; font-weight: bold;" />			
+			<input type="submit" id="ops_submit" value="Συνέχεια" style="padding: 10px 20px; font-size: 16px; font-weight: bold;" />	
+            ' . $txt['login_below'] . '		
 		</form>		
 	';
 }

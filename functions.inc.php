@@ -63,6 +63,7 @@ function get_admin_menu(){
                     array('name' => 'Αρχική', 'url' => 'index.php'),
                     array('name' => 'Μισθοδοτούμενοι', 'url' => 'list_users.php'),
                     array('name' => 'Διαχείριση XML', 'url' => 'manage_xml.php'),
+                    array('name' => 'Κείμενα', 'url' => 'edit-texts.php'),
                     array('name' => 'Αρχείο καταγραφής', 'url' => 'view_log.php'),
                     //array('name' => 'Τεκμηρίωση', 'url' => 'https://github.com/fractalbit/misthodosia-online/blob/master/readme.md', 'target' => '_blank'),
                 );
@@ -110,11 +111,21 @@ function print_header(){
 		<link rel="stylesheet" href="css/reset.css">
 		<link rel="stylesheet" href="css/style.css">
 
+        <!-- Include Font Awesome. -->
+          <link href="js/froala/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+
+          <!-- Include Editor style. -->
+          <link href="js/froala/css/froala_editor.min.css" rel="stylesheet" type="text/css" />
+          <link href="js/froala/css/froala_style.min.css" rel="stylesheet" type="text/css" />
+
+
         <!-- load google hosted jquery with local fallback -->
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script src="http://code.jquery.com/jquery-1.11.0.js"></script>
         <script>window.jQuery || document.write('<script src="js/jquery-1.7.1.min.js"><\/script>')</script>
 
         <script src="js/jquery.slideto.v1.2.custom.js"></script>
+
+
         <script src="js/script.js"></script>
 	</head>
 	<body>

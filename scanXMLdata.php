@@ -28,7 +28,11 @@
 
 include_once('./init.inc.php');
 
+// $memory_limit = $m = ini_get('memory_limit');
+// echo '<h3>' . $m . '</h3>';
 ini_set('memory_limit', '516M'); // ευχαριστώ το "ΤΜΗΜΑ ΜΗΧΑΝΟΓΡΑΦΗΣΗΣ ΔΙΠΕ ΚΑΡΔΙΤΣΑΣ" - mixanografisi@dipe.kar.sch.gr
+// $memory_limit = $m = ini_get('memory_limit');
+// echo '<h3>' . $m . '</h3>';
 
 print_header();
 
