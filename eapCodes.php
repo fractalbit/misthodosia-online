@@ -35,7 +35,7 @@ $codes = array(	'kratiseis' => array(
 							'4052000' => array('desc' => 'Υγειον. Περίθαλψη', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4013601' => array('desc' => 'ΤΠΔΥ', 'amount_asf' => 0, 'amount_erg' => 0),
 							'3011300' => array('desc' => 'Φόρος', 'amount_asf' => 0, 'amount_erg' => 0),
-							'3089100' => array('desc' => 'Ειδική εισφορά αλληλεγγύης', 'amount_asf' => 0, 'amount_erg' => 0),
+							'3089100' => array('desc' => 'Ειδική εισφορά αλληλεγγυης Ν.3986 Αρ.29 Παρ. 4', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4003101' => array('desc' => 'ΜΠΤΥ', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4003103' => array('desc' => 'ΜΠΤΥ Νεοδιόριστου', 'amount_asf' => 0, 'amount_erg' => 0),
 							'3324300' => array('desc' => 'Απεργία', 'amount_asf' => 0, 'amount_erg' => 0),

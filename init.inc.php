@@ -32,11 +32,26 @@ include('./efpp.class.php');
 
 include('./ranks.php');
 include('./eapCodes.php');
-if(file_exists('./passwords.php')){
-    include('./passwords.php');
+
+
+if(file_exists('passwords.php') && !file_exists(APP_DIR . '/passwords.php')){
+    // Αυτό θα (πρεπει) να τρέξει μόνο μία φορά για να υπάρξει ομαλή μετάβαση στο νέο σύστημα διαχείρισης κωδικών!
+    
+    include('./passwords.php'); // Φόρτωσε τους υπάρχοντες κωδικούς
+    if(!empty($protected)) save_file(APP_DIR . '/passwords.php', $protected); // Αν υπάρχουν, αποθήκευσέ τους στο νέο αρχείο
+
+    // Φτιάξε ένα νέο passwords.php με επεξηγηματικό κείμενο για το νέο σύστημα
+    $explain = '<?php // Το αρχείο αυτό δεν χρησιμοποείται πλέον. Η διαχείριση των κωδικών γίνεται από τη σελίδα "Ρυθμίσεις". Κάντε είσοδο ως διαχειριστής για να διαχειριστείτε τους κωδικούς.';
+    file_put_contents('passwords.php', $explain);
+}
+
+// Load the protected array (afm->password combinations)
+if(file_exists(APP_DIR . '/passwords.php')){
+    $protected = load_file(APP_DIR . '/passwords.php'); // Φόρτωσε το αρχείο με τους κωδικούς
 }else{
     $protected = array();
 }
+
 
 $session_path = trailingslashit(APP_DIR) . 'session_data';
 if(!empty($session_path)) fSession::setPath($session_path);

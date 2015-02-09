@@ -25,7 +25,7 @@
 
 include_once('./init.inc.php');
 
-$txt = json_decode(file_get_contents(APP_DIR . '/cms/lang.json'), true); // Φόρτωσε το αρχείο γλώσσας
+$txt = json_decode(file_get_contents(APP_DIR . '/cms/texts.json'), true); // Φόρτωσε το αρχείο γλώσσας
 
 $salt = rand_str(5); 
 fSession::set('salt', $salt);
@@ -418,43 +418,6 @@ function get_children($amount){
 }
 
 
-function check_afm($afm){
-// Ελέγχει αν ο ΑΦΜ είναι έγκυρος και επιστρέφει true ή false
-	if ($afm == '' || strlen($afm) != 9){
-		return false;
-	} else {
-		$cd = substr($afm, 8, 1); 
-	}
-	if ($afm == '000000000'){
-		return false;
-	}
-
-	$sum = 0;
-	$afm_ok = false;
-
-	for($i=0; $i<8; $i++){
-		if (ord(substr($afm, $i, 1)) < 48 || ord(substr($afm, $i, 1)) > 57){
-			return false;        
-		} else {
-			$d = substr($afm, $i, 1);
-			if ($i<8){
-				$sum = $sum + $d * pow(2,8-$i);
-			}
-		}
-	}
-	if ($sum == 0){
-		return false;
-	} else {
-		$calc = $sum % 11;
-		if ($calc == $cd || (($calc == 0 || $calc == 10) && $cd == 0) ){
-			return true;
-		} else {
-			return false;
-		} 
-	}
-
-}
-
 function message($title, $content, $type = 'information'){
 	echo '<div class="'.$type.' box" style="margin-bottom: 30px;"><h3>'.$title.'</h3>
 	'.$content.'</div>';
@@ -472,13 +435,19 @@ function print_form($error= 'none'){
 
 	echo '
 		<form action="'.$SERVER['PHPSELF'].'" method="post">
-			<div style="margin-bottom: 20px;">' . $txt['login_above'] . '</div>
-			<label>' . $txt['afm_label'] . '</label><input type="text" name="afm" class="large_input" maxlength="9" style="letter-spacing: 2px; width: 150px; padding: 8px 10px; font-size: 18px; font-weight: bold; font-family: Arial; '.$afm_error.'" value="'.$temp_afm.'" /><br />
-			<label>' . $txt['amm_label'] . '</label><input type="password" name="amm" class="large_input" maxlength="20" style="letter-spacing: 2px; width: 150px; padding: 8px 10px; font-size: 18px; font-weight: bold; font-family: Arial; '.$amm_error.'" value="'.$temp_amm.'" /><br />
-			
-			<input type="hidden" name="proccess" />
-			<input type="submit" id="ops_submit" value="Συνέχεια" style="padding: 10px 20px; font-size: 16px; font-weight: bold;" />	
-            ' . $txt['login_below'] . '		
+			<div>' . $txt['login_above'] . '</div>
+            <div class="user_login_container clearfix">
+    			<div class="user_form">
+                    <label>' . $txt['afm_label'] . '</label><input type="text" name="afm" class="large_input" maxlength="9" style="letter-spacing: 2px; width: 150px; padding: 8px 10px; font-size: 18px; font-weight: bold; font-family: Arial; '.$afm_error.'" value="'.$temp_afm.'" /><br />
+        			<label>' . $txt['amm_label'] . '</label><input type="password" name="amm" class="large_input" maxlength="20" style="letter-spacing: 2px; width: 150px; padding: 8px 10px; font-size: 18px; font-weight: bold; font-family: Arial; '.$amm_error.'" value="'.$temp_amm.'" /><br />
+        			
+        			<input type="hidden" name="proccess" />
+        			<input type="submit" id="ops_submit" value="Συνέχεια" style="padding: 10px 20px; font-size: 16px; font-weight: bold;" />	
+                </div>
+                <div class="login_notes">
+                ' . $txt['login_below'] . '		
+                </div>
+            </div>
 		</form>		
 	';
 }

@@ -318,3 +318,42 @@ ul#admin-menu li.current a, ul#admin-menu li a:hover {
 	font-size: 16px;
 	font-weight: normal;
 };
+
+table#passwords {
+	margin-top: 20px;
+	display: block;
+}
+
+table#passwords td {
+	border: 1px solid #ccc;
+	padding: 8px;
+}
+/*
+table#passwords thead td {
+	
+	border: 1px solid #ccc;
+	padding: 8px;
+}*/
+
+ul.pws_tabs_controll {
+	margin: 0;
+}
+
+.froala-box .froala-wrapper {
+	overflow: visible !important;
+}
+
+.user_login_container div{
+	float: left;	
+}
+
+.user_login_container div.user_form {
+	width: 300px;
+	padding-top: 10px;
+}
+
+.user_login_container div.login_notes {
+	width: 500px;	
+	padding-top: 5px;
+}
+

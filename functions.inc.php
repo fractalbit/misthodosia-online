@@ -63,7 +63,7 @@ function get_admin_menu(){
                     array('name' => 'Αρχική', 'url' => 'index.php'),
                     array('name' => 'Μισθοδοτούμενοι', 'url' => 'list_users.php'),
                     array('name' => 'Διαχείριση XML', 'url' => 'manage_xml.php'),
-                    array('name' => 'Κείμενα', 'url' => 'edit-texts.php'),
+                    array('name' => 'Ρυθμίσεις', 'url' => 'settings.php'),
                     array('name' => 'Αρχείο καταγραφής', 'url' => 'view_log.php'),
                     //array('name' => 'Τεκμηρίωση', 'url' => 'https://github.com/fractalbit/misthodosia-online/blob/master/readme.md', 'target' => '_blank'),
                 );
@@ -114,17 +114,29 @@ function print_header(){
         <!-- Include Font Awesome. -->
           <link href="js/froala/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
 
-          <!-- Include Editor style. -->
-          <link href="js/froala/css/froala_editor.min.css" rel="stylesheet" type="text/css" />
+          <?php if( admin_configured() && $admin->check_logged_in() ){ ?>
+              <!-- Include froala Editor style. -->
+              <link href="js/froala/css/froala_editor.min.css" rel="stylesheet" type="text/css" />
+
+              <!-- Include pws tabs style. -->
+              <link type="text/css" rel="stylesheet" href="js/pwstabs/assets/jquery.pwstabs-1.2.1.css">
+          <?php
+            }
+          ?>
+
           <link href="js/froala/css/froala_style.min.css" rel="stylesheet" type="text/css" />
 
 
         <!-- load google hosted jquery with local fallback -->
-        <script src="http://code.jquery.com/jquery-1.11.0.js"></script>
+        <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/jquery-1.7.1.min.js"><\/script>')</script>
 
         <script src="js/jquery.slideto.v1.2.custom.js"></script>
-
+        <?php if( admin_configured() && $admin->check_logged_in() ){ ?>
+              <script src="js/jquery.fastLiveFilter.js"></script>
+        <?php
+           }
+        ?>
 
         <script src="js/script.js"></script>
 	</head>
@@ -148,13 +160,21 @@ function print_header(){
 }
 
 function print_footer(){
-	echo '
-	<br />
-	<hr />
-	<div class="subtle">Λογισμικό ανοικτού κώδικα "<a href="http://dide.arg.sch.gr/grmixan/misthodosia-online-app/" target="_blank">Μισθοδοσία online</a>"</span>
-	</div>
-	</body>
-	</html>';
+	?>
+    	<br />
+    	<hr />
+    	<div class="subtle">Λογισμικό ανοικτού κώδικα "<a href="http://dide.arg.sch.gr/grmixan/misthodosia-online-app/" target="_blank">Μισθοδοσία online</a>"</span>
+    	</div>
+        <?php
+            if(file_exists(APP_DIR . '/cms/google_analytics.code')){
+                $ga_code = trim(file_get_contents(APP_DIR . '/cms/google_analytics.code'));
+                if(!empty($ga_code)) echo $ga_code;
+            }
+
+        ?>
+    	</body>
+    	</html>
+    <?php
 }
 
 function full_dir(){
@@ -293,4 +313,41 @@ function trailingslashit($string) {
  */
 function untrailingslashit($string) {
     return rtrim($string, '/');
+}
+
+function check_afm($afm){
+// Ελέγχει αν ο ΑΦΜ είναι έγκυρος και επιστρέφει true ή false
+    if ($afm == '' || strlen($afm) != 9){
+        return false;
+    } else {
+        $cd = substr($afm, 8, 1); 
+    }
+    if ($afm == '000000000'){
+        return false;
+    }
+
+    $sum = 0;
+    $afm_ok = false;
+
+    for($i=0; $i<8; $i++){
+        if (ord(substr($afm, $i, 1)) < 48 || ord(substr($afm, $i, 1)) > 57){
+            return false;        
+        } else {
+            $d = substr($afm, $i, 1);
+            if ($i<8){
+                $sum = $sum + $d * pow(2,8-$i);
+            }
+        }
+    }
+    if ($sum == 0){
+        return false;
+    } else {
+        $calc = $sum % 11;
+        if ($calc == $cd || (($calc == 0 || $calc == 10) && $cd == 0) ){
+            return true;
+        } else {
+            return false;
+        } 
+    }
+
 }
