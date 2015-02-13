@@ -34,54 +34,14 @@ if(admin_configured()){
 
         ?>
             <!-- Include FROALA JS files. -->
-            <script src="js/froala/js/froala_editor.min.js"></script>
-            <script src="js/froala/js/plugins/colors.min.js"></script>
-            <script src="js/froala/js/plugins/font_size.min.js"></script>
-            <script src="js/froala/js/plugins/lists.min.js"></script>
-
-            <!-- Include IE8 JS. -->
-            <!--[if lt IE 9]>
-                <script src="../js/froala_editor_ie8.min.js"></script>
-            <![endif]-->
-
-            <!-- Initialize the FROALA editor. -->
-            <script>
-                $(function() {
-                    $('.text').editable({
-                        inlineMode: false,
-                        buttons: ["undo", "redo", "sep", "bold", "italic", "underline", "strikeThrough", "sep", "fontFamily", "fontSize", "color", "formatBlock",  "align", "sep", "insertOrderedList", "insertUnorderedList", "sep", "createLink", "insertHorizontalRule", "sep", "html", "removeFormat"]
-                    })
-                });
-            </script>
-
+            <script src="js/ckeditor/ckeditor.js"></script>
 
             <script src="js/pwstabs/assets/jquery.pwstabs-1.2.1.min.js"></script>
 
-            <script>
-            jQuery(document).ready(function($){
-                $('.settings_tabs').pwstabs({
-                   effect: 'scale',
-                   containerWidth: '100%',
-                   defaultTab: 
-                   <?php
-                        if(isset($_POST['google_analytics'])){
-                            echo '3';
-                        }elseif(isset($_POST['save'])){
-                            echo '2';
-                        }else{
-                            echo '1';
-                        }
-                   ?>,
-                   theme: 'pws_theme_grey'
-                });
-            });
-            </script>
-
-
-
+            
         <div class="settings_tabs">
 
-            <div data-pws-tab="texts" data-pws-tab-name="Κείμενα">
+            <div data-pws-tab="texts" data-pws-tab-name="Κείμενα" style="min-height: 1330px;">
                 <?php
                     if(isset($_POST['header'])){
                         // Αποθήκευση των κειμένων
@@ -96,9 +56,9 @@ if(admin_configured()){
 
                     <form id="texts" action="" method="POST">
                         <h2>Κείμενα αρχικής σελίδας</h2>
-                        <textarea class="text" name="header" id="header"><?php echo $txt['header'] ?></textarea><br /><br />
-                        <textarea class="text" name="login_below" id="login_below"><?php echo $txt['login_below'] ?></textarea><br /><br />
-                        <textarea class="text" name="footer" id="footer"><?php echo $txt['footer'] ?></textarea><br /><br />
+                        <textarea class="text" name="header" id="txt_header"><?php echo $txt['header'] ?></textarea><br /><br />
+                        <textarea class="text" name="login_below" id="txt_login_below"><?php echo $txt['login_below'] ?></textarea><br /><br />
+                        <textarea class="text" name="footer" id="txt_footer"><?php echo $txt['footer'] ?></textarea><br /><br />
                         <h2>Ετικέτες για τη φόρμα σύνδεσης</h2>
                         <input style="padding: 8px" type="text" name="afm_label" value="<?php echo $txt['afm_label'] ?>" /><br /><br />
                         <input style="padding: 8px" type="text" name="amm_label" value="<?php echo $txt['amm_label'] ?>" /><br /><br />
@@ -107,6 +67,15 @@ if(admin_configured()){
 
                         <input type="submit" class="button" value="Αποθήκευση" style="padding: 10px 10px; font-size: 16px; font-weight: bold;" />
                     </form>
+
+                    <!-- Initialize the ckeditor -->
+                    <script>
+                        jQuery(document).ready(function($){
+                            CKEDITOR.replace( 'txt_header' );                    
+                            CKEDITOR.replace( 'txt_login_below' );                    
+                            CKEDITOR.replace( 'txt_footer' );                                                
+                        });
+                    </script>
                 
             </div>            
             
@@ -213,7 +182,27 @@ if(admin_configured()){
             </div>
 
 
-        </div>          
+        </div>  
+
+        <script>
+        jQuery(document).ready(function($){
+            $('.settings_tabs').pwstabs({
+               effect: 'scale',
+               containerWidth: '100%',
+               defaultTab: 
+               <?php
+                    if(isset($_POST['google_analytics'])){
+                        echo '3';
+                    }elseif(isset($_POST['save'])){
+                        echo '2';
+                    }else{
+                        echo '1';
+                    }
+               ?>,
+               theme: 'pws_theme_grey'
+            });
+        });
+        </script>        
 
         <?php
 

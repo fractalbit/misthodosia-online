@@ -110,23 +110,15 @@ function print_header(){
 
 		<link rel="stylesheet" href="css/reset.css">
 		<link rel="stylesheet" href="css/style.css?ver=2.0.0">
-
-        <!-- Include Font Awesome. -->
-        <link href="js/froala/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-
+      
         <?php 
             if( admin_configured() && $admin->check_logged_in() ){ 
-        ?>
-          <!-- Include froala Editor style. -->
-          <link href="js/froala/css/froala_editor.min.css" rel="stylesheet" type="text/css" />
-
+        ?>         
           <!-- Include pws tabs style. -->
           <link type="text/css" rel="stylesheet" href="js/pwstabs/assets/jquery.pwstabs-1.2.1.css">
         <?php
             }
-        ?>
-
-          <link href="js/froala/css/froala_style.min.css" rel="stylesheet" type="text/css" />
+        ?>       
 
 
         <!-- load google hosted jquery with local fallback -->
