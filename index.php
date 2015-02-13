@@ -25,8 +25,6 @@
 
 include_once('./init.inc.php');
 
-$txt = json_decode(file_get_contents(APP_DIR . '/cms/texts.json'), true); // Φόρτωσε το αρχείο γλώσσας
-
 $salt = rand_str(5); 
 fSession::set('salt', $salt);
 fSession::set('afm', trim($_REQUEST['afm']));

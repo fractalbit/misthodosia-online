@@ -46,11 +46,11 @@ if(admin_configured()){
                     if(isset($_POST['header'])){
                         // Αποθήκευση των κειμένων
                         $txt_new = array('header' => $_POST['header'], 'login_below' => $_POST['login_below'], 'footer' => $_POST['footer'], 'afm_label' => $_POST['afm_label'], 'amm_label' => $_POST['amm_label']);
-                        file_put_contents(APP_DIR . '/cms/texts.json', json_encode($txt_new)) or die("Αποτυχία αποθήκευσης");
+                        file_put_contents(APP_DIR . '/texts.json', json_encode($txt_new)) or die("Αποτυχία αποθήκευσης");
                         echo '<h2 style="color: green">Τα δεδομένα αποθηκεύτηκαν με επιτυχία</h2>';
-                    }
 
-                    $txt = json_decode(file_get_contents(APP_DIR . '/cms/texts.json'), true); // Φόρτωσε το αρχείο γλώσσας                
+                         $txt = json_decode(file_get_contents(APP_DIR . '/texts.json'), true); // Ξανα-Φόρτωσε το αρχείο γλώσσας
+                    }                            
                 ?>
                     <i><strong>Σημείωση:</strong> Επεξεργαστείτε τα κείμενα και πιέστε αποθήκευση στο κάτω μέρος της σελίδας</i>
 
@@ -144,7 +144,7 @@ if(admin_configured()){
                             $periods = load_file($file);
                             $name = $periods['personal_info']['lastname'] . ' ' .$periods['personal_info']['firstname'];;
                             ?>
-                                <tr><td><?= $name ?></td><td><input type="text" name="afm[]" value="<?= $afm ?>" /></td><td><input type="text" name="pass[]" value="<?= $pass ?>" /></td></tr>
+                                <tr><td><?php echo  $name ?></td><td><input type="text" name="afm[]" value="<?php echo $afm ?>" /></td><td><input type="text" name="pass[]" value="<?php echo $pass ?>" /></td></tr>
                             <?php
                             $i++;
                         }
@@ -164,18 +164,18 @@ if(admin_configured()){
                 <?php
                     if(isset($_POST['google_analytics'])){
                         // Αποθήκευση του κώδικα για google analytics                        
-                        file_put_contents(APP_DIR . '/cms/google_analytics.code', $_POST['google_analytics']) or die("Αποτυχία αποθήκευσης");
+                        file_put_contents(APP_DIR . '/google_analytics.code', $_POST['google_analytics']) or die("Αποτυχία αποθήκευσης");
                         echo '<h2 style="color: green">H αποθήκευση του κώδικα για το google analytics έγινε με επιτυχία</h2>';
                     }
-                    if(file_exists(APP_DIR . '/cms/google_analytics.code')){
-                        $ga_code = trim(file_get_contents(APP_DIR . '/cms/google_analytics.code'));             
+                    if(file_exists(APP_DIR . '/google_analytics.code')){
+                        $ga_code = trim(file_get_contents(APP_DIR . '/google_analytics.code'));             
                     }else{
                         $ga_code = '';
                     }
                 ?>
                 <h2>Κώδικας google analytics (προαιρετικό)</h2>
                 <form action="" method="post">
-                    <textarea name="google_analytics" style="width: 900px; height: 160px"><?= $ga_code ?></textarea><br><br>
+                    <textarea name="google_analytics" style="width: 900px; height: 160px"><?php echo  $ga_code ?></textarea><br><br>
                     <input type="submit" class="button" value="Αποθήκευση" style="padding: 10px 10px; font-size: 16px; font-weight: bold;" />
                 </form><br><br>
 

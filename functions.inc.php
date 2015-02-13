@@ -161,8 +161,8 @@ function print_footer(){
     	<div class="subtle">Λογισμικό ανοικτού κώδικα "<a href="http://dide.arg.sch.gr/grmixan/misthodosia-online-app/" target="_blank">Μισθοδοσία online</a>"</span>
     	</div>
         <?php
-            if(file_exists(APP_DIR . '/cms/google_analytics.code')){
-                $ga_code = trim(file_get_contents(APP_DIR . '/cms/google_analytics.code'));
+            if(file_exists(APP_DIR . '/google_analytics.code')){
+                $ga_code = trim(file_get_contents(APP_DIR . '/google_analytics.code'));
                 if(!empty($ga_code)) echo $ga_code;
             }
 
