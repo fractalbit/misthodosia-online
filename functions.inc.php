@@ -109,36 +109,39 @@ function print_header(){
 		<title>Μισθοδοσία online - <?php echo ORG_TITLE; ?></title>
 
 		<link rel="stylesheet" href="css/reset.css">
-		<link rel="stylesheet" href="css/style.css">
+		<link rel="stylesheet" href="css/style.css?ver=2.0.0">
 
         <!-- Include Font Awesome. -->
-          <link href="js/froala/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <link href="js/froala/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
 
-          <?php if( admin_configured() && $admin->check_logged_in() ){ ?>
-              <!-- Include froala Editor style. -->
-              <link href="js/froala/css/froala_editor.min.css" rel="stylesheet" type="text/css" />
+        <?php 
+            if( admin_configured() && $admin->check_logged_in() ){ 
+        ?>
+          <!-- Include froala Editor style. -->
+          <link href="js/froala/css/froala_editor.min.css" rel="stylesheet" type="text/css" />
 
-              <!-- Include pws tabs style. -->
-              <link type="text/css" rel="stylesheet" href="js/pwstabs/assets/jquery.pwstabs-1.2.1.css">
-          <?php
+          <!-- Include pws tabs style. -->
+          <link type="text/css" rel="stylesheet" href="js/pwstabs/assets/jquery.pwstabs-1.2.1.css">
+        <?php
             }
-          ?>
+        ?>
 
           <link href="js/froala/css/froala_style.min.css" rel="stylesheet" type="text/css" />
 
 
         <!-- load google hosted jquery with local fallback -->
         <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-        <script>window.jQuery || document.write('<script src="js/jquery-1.7.1.min.js"><\/script>')</script>
+        <script>window.jQuery || document.write('<script src="js/jquery-1.11.2.min.js"><\/script>')</script>
 
-        <script src="js/jquery.slideto.v1.2.custom.js"></script>
+        <script src="js/jquery.slideto.v1.2.custom.js?ver=2.0.0"></script>
+        
         <?php if( admin_configured() && $admin->check_logged_in() ){ ?>
               <script src="js/jquery.fastLiveFilter.js"></script>
         <?php
            }
         ?>
 
-        <script src="js/script.js"></script>
+        <script src="js/script.js?ver=2.0.0"></script>
 	</head>
 	<body>
 	<div class="container">

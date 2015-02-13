@@ -45,6 +45,8 @@ if(file_exists('passwords.php') && !file_exists(APP_DIR . '/passwords.php')){
     file_put_contents('passwords.php', $explain);
 }
 
+if(file_exists('passwords.sample.php')) unlink('passwords.sample.php');
+
 // Load the protected array (afm->password combinations)
 if(file_exists(APP_DIR . '/passwords.php')){
     $protected = load_file(APP_DIR . '/passwords.php'); // Φόρτωσε το αρχείο με τους κωδικούς
