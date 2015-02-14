@@ -38,6 +38,26 @@ if(admin_configured()){
 
             <script src="js/pwstabs/assets/jquery.pwstabs-1.2.1.min.js"></script>
 
+            <script>
+            jQuery(document).ready(function($){
+                $('.settings_tabs').pwstabs({
+                   effect: 'scale',
+                   containerWidth: '100%',
+                   defaultTab: 
+                   <?php
+                        if(isset($_POST['google_analytics'])){
+                            echo '3';
+                        }elseif(isset($_POST['save'])){
+                            echo '2';
+                        }else{
+                            echo '1';
+                        }
+                   ?>,
+                   theme: 'pws_theme_grey'
+                });
+            });
+            </script>       
+
             
         <div class="settings_tabs">
 
@@ -164,7 +184,10 @@ if(admin_configured()){
                 <?php
                     if(isset($_POST['google_analytics'])){
                         // Αποθήκευση του κώδικα για google analytics                        
+                        if(empty($_POST['google_analytics'])) $_POST['google_analytics'] = ' ';
+
                         file_put_contents(APP_DIR . '/google_analytics.code', $_POST['google_analytics']) or die("Αποτυχία αποθήκευσης");
+                        
                         echo '<h2 style="color: green">H αποθήκευση του κώδικα για το google analytics έγινε με επιτυχία</h2>';
                     }
                     if(file_exists(APP_DIR . '/google_analytics.code')){
@@ -184,25 +207,7 @@ if(admin_configured()){
 
         </div>  
 
-        <script>
-        jQuery(document).ready(function($){
-            $('.settings_tabs').pwstabs({
-               effect: 'scale',
-               containerWidth: '100%',
-               defaultTab: 
-               <?php
-                    if(isset($_POST['google_analytics'])){
-                        echo '3';
-                    }elseif(isset($_POST['save'])){
-                        echo '2';
-                    }else{
-                        echo '1';
-                    }
-               ?>,
-               theme: 'pws_theme_grey'
-            });
-        });
-        </script>        
+         
 
         <?php
 
