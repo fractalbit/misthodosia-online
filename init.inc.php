@@ -71,8 +71,8 @@ if(file_exists(APP_DIR . '/texts.json')) {
                     );
 }
 
-$session_path = trailingslashit(APP_DIR) . 'session_data';
-if(!empty($session_path)) fSession::setPath($session_path);
+// $session_path = trailingslashit(APP_DIR) . 'session_data';
+// if(!empty($session_path)) fSession::setPath($session_path);
 fSession::setLength('1 hour');
 fSession::open();
 
