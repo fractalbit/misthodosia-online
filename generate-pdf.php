@@ -89,7 +89,7 @@ if(defined('ORG_URL') && strlen(ORG_URL)>0){
 		// να μην μπορεί κάποιος να κατεβάσει απευθείας το pdf κάποιου άλλου, γνωρίζοντας μόνο το ΑΦΜ του.
 		// Το salt και το afm διαβάζονται από το session
 
-		$output_file = trailingslashit(USER_DIR) . $afm . '_' . $salt . '.pdf';
+		$output_file = trailingslashit(dirname(__FILE__)) . trailingslashit(USER_DIR) . $afm . '_' . $salt . '.pdf';
 
 		//$link_file = trailingslashit(ORG_URL) . trailingslashit(current_dir()) . trailingslashit(USER_DIR) .  $afm . '_' . $salt . '.pdf';
 		//Close and output PDF document
