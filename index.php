@@ -204,10 +204,12 @@ function get_html($key, $user){
 
 
     $rank = $user['rank'];
+    $mk = $user['mk'];
     //dump($rank);
     //dump($ranks);
     $category = $user['category'];  
     if(!empty($rank)) $ranktxt = ' / Βαθμός: ' . $category . ' - ' .$ranks[$rank];
+    if(!empty($mk)) $ranktxt = ' / Κατηγορία: ' . $category . ' / ΜΚ ν. 4354/2015: ' . $mk;
 
     echo $style;    
     $tw = 640;              

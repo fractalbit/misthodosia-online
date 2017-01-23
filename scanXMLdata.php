@@ -151,6 +151,7 @@ function xml_extract($file){
 			$afm = ''.$employee->identification->tin;
 			$amm = ''.$employee->identification->amm;
 			$rank = ''.$employee->identification->scale->rank;
+			$mk = ''.$employee->identification->scale->mk; //dump($mk);
 			$category = ''.$employee->identification->category['value'];
 			$user = $employee->identification;		
 
@@ -222,7 +223,8 @@ function xml_extract($file){
 													'secondhalf' => $second, // Β δεκαπενθήμερο
 													'days' => $days, // Λεκτική περιγραφή αναδρομικών				
 													'analysis' => $pliromes, // Αναλυτικά οι κρατήσεις και τα επιδόματα
-													'rank' => $rank, // Βαθμός και κατηγορία εκπαίδευσης
+													'rank' => $rank, // Βαθμός και κατηγορία εκπαίδευσης - ν. 4024/2011
+													'mk' => $mk, // ΜΚ και κατηγορία εκπαίδευσης - ν. 4354/2015
 													'category' => $category
 												);
 
