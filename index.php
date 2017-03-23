@@ -27,7 +27,9 @@ include_once('./init.inc.php');
 
 $salt = rand_str(5); 
 fSession::set('salt', $salt);
-fSession::set('afm', trim($_REQUEST['afm']));
+if (isset($_REQUEST['afm'])) {
+   fSession::set('afm', trim($_REQUEST['afm']));
+}
 //fSession::close();
 
 print_header();
@@ -55,6 +57,7 @@ if(isset($_POST['proccess']) || isset($_GET['afm'])){
 				$am = $periods['personal_info']['amm'];
                 krsort($periods);
                 $name = $periods['personal_info']['lastname'] . ' ' . $periods['personal_info']['firstname']  .' (' . $afm . ')';
+                $mk = $periods['personal_info']['mk'];
 
 				$pass = FALSE;
 				if(array_key_exists($afm, $protected)){
@@ -87,7 +90,9 @@ if(isset($_POST['proccess']) || isset($_GET['afm'])){
 
 					if(defined('TC_PDF_LIB_DIR') && file_exists(TC_PDF_LIB_DIR . '/tcpdf.php')){
 						//$link_file = ORG_URL . '/' . current_dir() . '/' . USER_DIR . '/' . $afm . '_' . $salt . '.pdf';
-                        $link_file = trailingslashit(ORG_URL) . trailingslashit(current_dir()) . trailingslashit(USER_DIR) .  $afm . '_' . $salt . '.pdf';
+                        //$link_file = trailingslashit(ORG_URL) . trailingslashit(current_dir()) . trailingslashit(USER_DIR) .  $afm . '_' . $salt . '.pdf';
+                        // το παραπάνω "οδηγούσε" σε λάθος δ/νση αρχείου (ξεκινούσε με ORG_URL)
+                        $link_file = trailingslashit(USER_DIR) .  $afm . '_' . $salt . '.pdf';
 						echo '<a href="" id="gen-pdf" class="button">Δημιουργία PDF ></a><div id="pdf-msg" style="display: inline-block; margin: 0 20px;"><span id="generating" style="
 						display: none;"><img src="img/loader.gif" style="position: relative; top: 6px; margin-right: 20px;" /></span><a id="pdf-complete" href="'.$link_file.'" target="_blank" class="button download" style="display: none">Αποθήκευση όλων σε pdf</a></div>';
 						fSession::set('pages', $pages);						
@@ -170,7 +175,7 @@ function mo_print_float_menu($periods){
 
 
 function get_html($key, $user){
-    global $name, $codes, $ranks;
+    global $name, $codes, $ranks, $mk;
 
     ob_start();
 
@@ -203,19 +208,17 @@ function get_html($key, $user){
     ';          
 
 
-    $rank = $user['rank'];
     //dump($rank);
     //dump($ranks);
     $category = $user['category'];  
-    if(!empty($rank)) $ranktxt = ' / Βαθμός: ' . $category . ' - ' .$ranks[$rank];
 
     echo $style;    
     $tw = 640;              
    // echo '<a name="period'.$user['month'] . '-' . $user['year'].'"></a>';
     echo '<a name="period'.$user['month'] . '-' . $user['year'].'"></a>';
     echo '<div style="display: block; width: '.$tw.'px; vertical-align: top; margin-bottom: 25px;">     
-    <h3>'.$name.$ranktxt.'</h3>
-    <h4>Περίοδος Μισθοδοσίας: '.$user['month_str'] . ' ' . $user['year'] .'</h4>';
+    <h3>'.$name.'</h3>
+    <h4>Περίοδος Μισθοδοσίας: '.$user['month_str'] . ' ' . $user['year'] .' - Μισθολογικό Κλιμάκιο: '.$mk.'</h4>';
     $kratiseis = $akatharistes = 0;
 
     $w1 = 340;

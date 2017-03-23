@@ -150,7 +150,7 @@ function xml_extract($file){
 
 			$afm = ''.$employee->identification->tin;
 			$amm = ''.$employee->identification->amm;
-			$rank = ''.$employee->identification->scale->rank;
+			$mk = ''.$employee->identification->scale->mk;
 			$category = ''.$employee->identification->category['value'];
 			$user = $employee->identification;		
 
