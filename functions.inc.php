@@ -43,10 +43,10 @@ function rand_str($length = 10) {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyz';
     $string = '';    
     for ($p = 0; $p < $length; $p++) {
-        $string .= $characters[mt_rand(0, strlen($characters))];
+        $string .= $characters[mt_rand(0, strlen($characters)-1)];
     }
-
-    return $string;
+    
+    return $string;    
 }
 
 function savelog($message, $file = 'admin_log.txt'){
