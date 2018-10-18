@@ -188,7 +188,7 @@ function get_period_from_xml($file){
     $date_test = strtotime('01-'.$m.'-'.$year); // Δημιουργία timestamp για τη μισθοδοτική περίοδο
 
     // Δημιουργία μοναδικού* αλφαρηθμιτικού που χρησιμεύει ως αναγνωριστικό περιόδου μισθοδοσίας και ταξινομείται σωστά χρονολογικά
-    $period_str = $period['year'] . '_' . $period['month'] . '_' . $xml->header->transaction->periodType['value'] . '_' . fCryptography::randomString(8);
+    $period_str = $period['year'] . '_' . $period['month'] . '_' . $xml->header->transaction->periodType['value'] . '_' . rand_str(8);
     // Προστέθηκε ένα τυχαίο string στο τέλος για να ξεχωρίζουν αρχεία που αφορούν στην ίδια περίοδο
 
     return array('period_str' => $period_str, 'month' => $month_str, 'year' => $year);
