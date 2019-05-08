@@ -75,6 +75,7 @@ $codes = array(	'kratiseis' => array(
 							'4044700' => array('desc' => 'Ο.Λ.Μ.Ε.', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4999901' => array('desc' => 'Α\' Ε.Λ.Μ.Ε.', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4999902' => array('desc' => 'Β\' Ε.Λ.Μ.Ε.', 'amount_asf' => 0, 'amount_erg' => 0),
+							'4999903' => array('desc' => 'Γ\' Ε.Λ.Μ.Ε.', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4014700' => array('desc' => 'Τ.Υ.Δ.Κ.Υ', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4038701' => array('desc' => 'Τ.Ε.Α.Δ.Υ. – Τ.Α.Δ.Κ.Υ. Κύρια Σύνταξη', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4038702' => array('desc' => 'Τ.Ε.Α.Δ.Υ. – Τ.Α.Δ.Κ.Υ. Επικουρική', 'amount_asf' => 0, 'amount_erg' => 0),
@@ -87,6 +88,7 @@ $codes = array(	'kratiseis' => array(
 							'4023200' => array('desc' => 'Τ.Ε.Α.Ε.Ι.Γ.Ε.', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4021200' => array('desc' => 'Ι.Κ.Α Συντ.', 'amount_asf' => 0, 'amount_erg' => 0),
 
+							'4065200' => array('desc' => 'Ι.Κ.Α', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4064901' => array('desc' => 'ΕΦΚΑ-Εισφ. Κύριας Ασφάλισης (Κλ. Σύνταξης) Δημοσίου έως 31/12/2010', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4064902' => array('desc' => 'ΕΦΚΑ-Εισφ. για Παροχές σε Είδος Υπαλ. Δημ. έως 31/12/2010 (πρώην ΟΠΑΔ)', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4064903' => array('desc' => 'ΕΦΚΑ-Εισφ. υπερ Λογ. σε χρήμα Υπαλλ. Δημ. έως 31/12/2010 (πρώην ΟΠΑΔ)', 'amount_asf' => 0, 'amount_erg' => 0),
@@ -108,7 +110,8 @@ $codes = array(	'kratiseis' => array(
 							'0232'	  => array('desc' => 'Επίδομα Εξωδιδακτικής', 'amount' => 0),
 							'0228'	  => array('desc' => 'Επίδομα Περιοχής', 'amount' => 0),
 							'0229'	  => array('desc' => 'Επ. Διδ. Προετοιμασίας', 'amount' => 0),
-							'0344'	  => array('desc' => 'Ακαθάριστες αποδοχές', 'amount' => 0)
+							'0344'	  => array('desc' => 'Ακαθάριστες αποδοχές', 'amount' => 0),
+							'2130104001'	  => array('desc' => 'Ακαθάριστες αποδοχές', 'amount' => 0)
 						)
 
 				),

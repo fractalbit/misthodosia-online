@@ -49,7 +49,8 @@ if(admin_configured()){
 		// Διαβάζει ένα-ένα τα αρχεία xml που υπάρχουν στο φάκελο 'XML_DIR'
 		// και οργανώνει τα οικονομικά στοιχεία ανα ΑΦΜ (μισθοδοτούμενο) στον πίνακα $dataset
 			xml_extract($file);	
-			$filename = end(explode('/', $file));
+			$filepath_array = explode('/', $file);
+			$filename = end($filepath_array);
 			$filename_with_time = $filename . '_' . filemtime($file);
 			$analyzed[$filename_with_time] = time();
 			echo 'Φορτώθηκε και αναλύθηκε το αρχείο ' . mb_convert_encoding($file, 'UTF-8', 'ISO-8859-7') . '<br />';
@@ -164,11 +165,13 @@ function xml_extract($file){
 			$update = FALSE;
 			// Αν η τρέχουσα περίοδος είναι πιο πρόσφατη από την καταχωρημένη για αυτό τον μισθοδοτούμενο,
 			// τότε και μόνο τότε ενημέρωσε τα προσωπικά του στοιχεία
-			if($date_test > $dataset[$afm]['personal_info']['date']){
+
+			if(!isset($dataset[$afm]) ||  $date_test > $dataset[$afm]['personal_info']['date']){
 				$update = TRUE;	
 			}else{
 				$update = FALSE;
 			}
+			
 			// Με αυτό τον τρόπο αποθηκεύονται μόνο τα προσωπικά στοιχεία της πιο πρόσφατης περιόδου.
 			// Σημαντικό αν π.χ. έχει διορθωθεί ο ΑΜ του μισθοδοτούμενου.
 
@@ -183,7 +186,7 @@ function xml_extract($file){
 				foreach ($payment->income as $income) {
 					$income_type = (string) $income['type'];	
 					
-					if(count($pliromes[$income_type]) == 0){
+					if(!isset($pliromes[$income_type])){
 						$pliromes[$income_type] = array(
 														'kratiseis' => array('desc' => '', 'data'=> array()),
 														'epidomata' => array('desc' => '', 'data' => array()),
@@ -224,7 +227,7 @@ function xml_extract($file){
 													'days' => $days, // Λεκτική περιγραφή αναδρομικών				
 													'analysis' => $pliromes, // Αναλυτικά οι κρατήσεις και τα επιδόματα
 													'rank' => $rank, // Βαθμός και κατηγορία εκπαίδευσης - ν. 4024/2011
-													'mk' => $mk, // ΜΚ και κατηγορία εκπαίδευσης - ν. 4354/2015
+													'mk' => $mk, // ΜΚ ν. 4354/2015
 													'category' => $category
 												);
 
@@ -324,7 +327,7 @@ function days_diff($end, $start, $string = TRUE){
 
 function bfglob($path, $pattern = '*', $flags = 0, $depth = 0) {
 	// Use glob to also scan in subdirectories
-	define(DIRECTORY_SEP, '/');
+	define('DIRECTORY_SEP', '/');
     $matches = array();
     $folders = array(rtrim($path, DIRECTORY_SEP));
     

@@ -27,7 +27,7 @@ include_once('./init.inc.php');
 
 $salt = rand_str(5); 
 fSession::set('salt', $salt);
-fSession::set('afm', trim($_REQUEST['afm']));
+if(isset($_REQUEST['afm'])) fSession::set('afm', trim($_REQUEST['afm']));
 //fSession::close();
 
 print_header();
@@ -64,7 +64,11 @@ if(isset($_POST['proccess']) || isset($_GET['afm'])){
 
                 if(!isset($am_length)) $am_length = 6;
 
-				if($am == $_POST['amm'] || (strlen(utf8_decode($am)) != $am_length && !$pass) || ($_POST['amm'] == SUPER_PASS && strlen(SUPER_PASS)>0) || $admin->check_logged_in()){
+                if(isset($_POST['amm'])) $given_amm = $_POST['amm']; else $given_amm = '';
+
+                // dump($given_amm);
+                // dump($am);
+				if($am == $given_amm || (strlen(utf8_decode($am)) != $am_length && !$pass) || ($given_amm == SUPER_PASS && strlen(SUPER_PASS)>0) || $admin->check_logged_in()){
 					// και εαν ο αριθμός μητρώου που δόθηκε είναι ίδιος με το ΑΜ του αρχείου Ή το μήκος του ΑΜ του αρχείου ΔΕΝ είναι 6 (άρα πρόκειται για αναπληρωτές ή διοικητικούς που δεν έχουν ΑΜ)
 					// -> ΤΟΤΕ δείξε τη μισθοδοσία τους.
 					
@@ -160,9 +164,11 @@ function mo_print_float_menu($periods){
 	echo '<div class="floating-menu">';
 	echo '<h3>Γρήγορη μετάβαση</h3>';
 	foreach ($periods as $key => $data) {
-		$name = $data['month_str'] . ' ' . $data['year'];
-		$link = '#period' . $data['month'] . '-' . $data['year'];
-		echo '<a href="'.$link.'" class="scrollLink">'.$name.'</a>';
+        if($key != 'personal_info'){
+            $name = $data['month_str'] . ' ' . $data['year'];
+            $link = '#period' . $data['month'] . '-' . $data['year'];
+            echo '<a href="'.$link.'" class="scrollLink">'.$name.'</a>';
+        }
 	}
 	echo '</div>';
 }
@@ -202,13 +208,13 @@ function get_html($key, $user){
         </style>
     ';          
 
-
-    $rank = $user['rank'];
-    $mk = $user['mk'];
+    $rank = isset($user['rank']) ? $user['rank'] : '';
+    $mk = isset($user['mk']) ? $user['mk'] : '';
+    // dump($user);
     //dump($rank);
     //dump($ranks);
     $category = $user['category'];  
-    if(!empty($rank)) $ranktxt = ' / Βαθμός: ' . $category . ' - ' .$ranks[$rank];
+    if(!empty($rank)) $ranktxt = ' / Βαθμός: ' . $category . ' - ' .$ranks[$rank]; else $ranktxt = '';
     if(!empty($mk)) $ranktxt = ' / Κατηγορία: ' . $category . ' / ΜΚ ν. 4354/2015: ' . $mk;
 
     echo $style;    
@@ -225,6 +231,7 @@ function get_html($key, $user){
     $w3 = ($w1-$w2) / 3;    
 
     $total_asf = $total_erg = $total_akatharistes = $total_entelomeno = 0;
+    $syn_asf = $syn_erg = $akatharistes = 0;
     
     foreach ($analysis as $income_type => $income) {
         echo '<br />Τύπος Μισθοδοσίας: '. get_type($income_type) . '<br />';    
@@ -426,16 +433,15 @@ function message($title, $content, $type = 'information'){
 function print_form($error= 'none'){
     global $txt;
 
-	if(isset($_POST['afm'])) $temp_afm = $_POST['afm'];
-	if(isset($_POST['amm'])) $temp_amm = $_POST['amm'];
+	if(isset($_POST['afm'])) $temp_afm = $_POST['afm']; else $temp_afm = '';
+	if(isset($_POST['amm'])) $temp_amm = $_POST['amm']; else $temp_amm = '';
 
 	$afm_error = $amm_error = '';
 	if($error == 'afm')	$afm_error = 'border: 1px solid red;';			
 	if($error == 'amm')	$amm_error = 'border: 1px solid red;';
 
 	echo '
-		<form action="'.$SERVER['PHPSELF'].'" method="post">
-			<div>' . $txt['login_above'] . '</div>
+		<form action="'.$_SERVER['PHP_SELF'].'" method="post">			
             <div class="user_login_container clearfix">
     			<div class="user_form">
                     <label>' . $txt['afm_label'] . '</label><input type="text" name="afm" class="large_input" maxlength="9" style="letter-spacing: 2px; width: 150px; padding: 8px 10px; font-size: 18px; font-weight: bold; font-family: Arial; '.$afm_error.'" value="'.$temp_afm.'" /><br />
@@ -443,10 +449,7 @@ function print_form($error= 'none'){
         			
         			<input type="hidden" name="proccess" />
         			<input type="submit" id="ops_submit" value="Συνέχεια" style="padding: 10px 20px; font-size: 16px; font-weight: bold;" />	
-                </div>
-                <div class="login_notes">
-                ' . $txt['login_below'] . '		
-                </div>
+                </div>                
             </div>
 		</form>		
 	';

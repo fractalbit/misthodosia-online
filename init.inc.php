@@ -21,7 +21,7 @@
 // Το αρχείο αυτό γίνεται include στα αρχεία της εφαρμογής και φορτώνει όλα τα απαραίτητα αρχεία για τη λειτουργία της
 /* *********** ΤΕΛΟΣ ΓΕΝΙΚΗΣ ΠΕΡΙΓΡΑΦΗΣ *********** */
 
-// error_reporting(E_ALL); ini_set('display_errors', '1');
+error_reporting(E_ALL); ini_set('display_errors', '1');
 
 if(!file_exists('config.inc.php')) die('To arxeio config.inc.php de vrethike. Parakaloume diavaste <a href="https://github.com/fractalbit/misthodosia-online/blob/master/readme.md">tin tekmiriosi</a>');
 

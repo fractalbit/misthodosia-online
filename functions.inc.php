@@ -75,7 +75,8 @@ function print_admin_menu(){
     global $admin;
 
     $menu = get_admin_menu();
-    $current_script = end(explode('/', $_SERVER['PHP_SELF']));
+    $scriptArgs = explode('/', $_SERVER['PHP_SELF']);
+    $current_script = end($scriptArgs);
     ?>
     <div id="admin-menu-container" class="clearfix">
         <div class="left">
@@ -185,7 +186,7 @@ function full_dir(){
 */
 function current_dir()
 {
-    $path = dirname($_SERVER[PHP_SELF]);
+    $path = dirname($_SERVER['PHP_SELF']);
     $position = strrpos($path,'/') + 1;
     return substr($path,$position);
 } 

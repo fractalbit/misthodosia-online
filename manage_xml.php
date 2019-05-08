@@ -105,7 +105,8 @@ if(admin_configured()){
         $i = 1;
         foreach($xml_files as $p_str => $data){
             $time = $data['time'];
-            $name = end(explode('/', $data['filename']));
+            $temp_name = explode('/', $data['filename']);
+            $name = end($temp_name);
             $period_id = $data['period']['month'] . ' ' . $data['period']['year'];
             $file_and_time = $name .'_'. $time;
             if(isset($analyzed[$file_and_time])){
@@ -134,7 +135,8 @@ if(admin_configured()){
         
         $scanlog = trailingslashit(APP_DIR) . 'scan_times.txt';
         if(file_exists($scanlog)) {
-            $last_scan_time = end(file($scanlog));
+            $scanlog_loaded = file($scanlog);
+            $last_scan_time = (int) end($scanlog_loaded);
             $last_scan_info = '<br /><br />Η ανάλυση αρχείων έτρεξε για τελευταία φορά στις ' . date('d/m/Y H:i:s', $last_scan_time);
         }else{
             $last_scan_info = '';
