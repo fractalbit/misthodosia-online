@@ -110,7 +110,7 @@ function print_header(){
 		<title>Μισθοδοσία online - <?php echo ORG_TITLE; ?></title>
 
 		<link rel="stylesheet" href="css/reset.css">
-		<link rel="stylesheet" href="css/style.css?ver=2.0.0">
+		<link rel="stylesheet" href="css/style.css?ver=2.1.0">
       
         <?php 
             if( admin_configured() && $admin->check_logged_in() ){ 
@@ -134,7 +134,7 @@ function print_header(){
            }
         ?>
 
-        <script src="js/script.js?ver=2.0.0"></script>
+        <script src="js/script.js?ver=2.1.0"></script>
 	</head>
 	<body>
 	<div class="container">
@@ -346,4 +346,59 @@ function check_afm($afm){
         } 
     }
 
+}
+
+function display_xml_error_message($file, $show_delete_link = true){
+    $show_delete_link ? $delete_link =  '<a href="file='.urlencode($file).'" class="delete confirm" rel="Είστε σίγουρος ότι θέλετε να διαγράψετε αυτό το αρχείο;">Διαγραφή</a>' : $delete_link ='';
+    echo '
+        <div class="error"><hr>Η φόρτωση του αρχείου 
+            <span style="font-weight: bold">' . $file . '</span> απέτυχε.'.$delete_link.'<br><br>
+            <span style="color: #666; font-style: italic">Το παραπάνω αρχείο δεν έχει έγκυρη δομή xml. Παρακαλούμε προσπαθήστε να εξάγετε εκ νέου το αρχείο
+            από το πρόγραμμα μισθοδοσίας σας και να το ανεβάσετε και πάλι εδώ. Διαφορετικά προσπαθήστε να διορθώσετε
+            χειροκίνητα τα λάθη ανοίγοντας το .xml αρχείο με κάποιον επεξεργαστή κειμένου.</span>
+            <br><br>
+            <a href="" class="button toggle_xml_errors">Εμφάνιση λαθών</a>
+            <hr>
+        </div>';
+}
+
+function display_xml_errors() {
+    $errors = libxml_get_errors();
+        
+    echo '<div class="xml-errors" style="display: none; border: 1px solid #666; padding: 20px">';
+    foreach ($errors as $error) {
+        echo display_xml_error($error);
+    }
+    echo '</div>';
+
+    libxml_clear_errors();
+}
+
+function display_xml_error($error)
+{
+    // $return  = $xml[$error->line - 1] . "<br>";
+    // $return .= str_repeat('-', $error->column) . "^<br>";
+    $return = '<div style="border-bottom: 1px solid #ccc; padding: 10px;">';
+
+    switch ($error->level) {
+        case LIBXML_ERR_WARNING:
+            $return .= "Warning $error->code: ";
+            break;
+         case LIBXML_ERR_ERROR:
+            $return .= "Error $error->code: ";
+            break;
+        case LIBXML_ERR_FATAL:
+            $return .= "Fatal Error $error->code: ";
+            break;
+    }
+
+    $return .= '<span style="font-weight: bold">' . trim($error->message) . '</span>';
+    $return .= "<br><b>Line: $error->line</b>" .
+               "<br>Column: $error->column";
+
+    if ($error->file) {
+        $return .= "<br>  File: $error->file";
+    }
+
+    return "$return</div>";
 }

@@ -166,32 +166,40 @@ function get_period_from_xml($file){
     global $changed_afm, $pliromes, $codes, $dataset, $months, $first, $second;
     
     $xmlstr = file_get_contents($file);
-    $xml = new SimpleXMLElement($xmlstr); // Διαβάζει το xml αρχείο σε μορφή αντικειμένου (συνάρτηση ενσωματωμένη στην PHP).
-
-    $period = $xml->header->transaction->period;
-    if($period['month'] < 10) $period['month'] = '0'.$period['month']; // Pad month numbers with zero
-
-    // Απαραίτητο για να μπορούμε να ταξινομήσουμε σωστά το επίδομα άδειας σε σχέση με τις άλλες μισθοδοτικές περιόδους
-    // ********* Ίσως θα πρέπει να προστεθεί κάτι παρόμοιο για δώρο Πάσχα/Χριστουγέννων ********* 
-    if($period['month'] == 14){
-        $period['month'] = '065';
-        $m = '07';
-    }elseif($period['month'] == 13){
-        $period['month'] = '045';
-        $m = '05';
+    
+    libxml_use_internal_errors(true);
+    $xml = simplexml_load_string($xmlstr); // Διαβάζει το xml αρχείο σε μορφή αντικειμένου (συνάρτηση ενσωματωμένη στην PHP).
+    if ($xml === false) {
+        display_xml_error_message($file);
+        display_xml_errors();
     }else{
-        $m = $period['month'];
-    }   
+        $period = $xml->header->transaction->period;
+        if($period['month'] < 10) $period['month'] = '0'.$period['month']; // Pad month numbers with zero
     
-    $month = (string) $period['month'];
-    $year = (string) $period['year'];   
-    $month_str = $months[$month];
+        // Απαραίτητο για να μπορούμε να ταξινομήσουμε σωστά το επίδομα άδειας σε σχέση με τις άλλες μισθοδοτικές περιόδους
+        // ********* Ίσως θα πρέπει να προστεθεί κάτι παρόμοιο για δώρο Πάσχα/Χριστουγέννων ********* 
+        if($period['month'] == 14){
+            $period['month'] = '065';
+            $m = '07';
+        }elseif($period['month'] == 13){
+            $period['month'] = '045';
+            $m = '05';
+        }else{
+            $m = $period['month'];
+        }   
+        
+        $month = (string) $period['month'];
+        $year = (string) $period['year'];   
+        $month_str = $months[$month];
+        
+        $date_test = strtotime('01-'.$m.'-'.$year); // Δημιουργία timestamp για τη μισθοδοτική περίοδο
     
-    $date_test = strtotime('01-'.$m.'-'.$year); // Δημιουργία timestamp για τη μισθοδοτική περίοδο
+        // Δημιουργία μοναδικού* αλφαρηθμιτικού που χρησιμεύει ως αναγνωριστικό περιόδου μισθοδοσίας και ταξινομείται σωστά χρονολογικά
+        $period_str = $period['year'] . '_' . $period['month'] . '_' . $xml->header->transaction->periodType['value'] . '_' . rand_str(8);
+        // Προστέθηκε ένα τυχαίο string στο τέλος για να ξεχωρίζουν αρχεία που αφορούν στην ίδια περίοδο
+    
+        return array('period_str' => $period_str, 'month' => $month_str, 'year' => $year);
+    }
 
-    // Δημιουργία μοναδικού* αλφαρηθμιτικού που χρησιμεύει ως αναγνωριστικό περιόδου μισθοδοσίας και ταξινομείται σωστά χρονολογικά
-    $period_str = $period['year'] . '_' . $period['month'] . '_' . $xml->header->transaction->periodType['value'] . '_' . rand_str(8);
-    // Προστέθηκε ένα τυχαίο string στο τέλος για να ξεχωρίζουν αρχεία που αφορούν στην ίδια περίοδο
-
-    return array('period_str' => $period_str, 'month' => $month_str, 'year' => $year);
 }
+

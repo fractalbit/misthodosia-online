@@ -75,8 +75,8 @@ a.download:hover {
 	font-size: 11px;
 }
 
-tr:nth-child(even) td, tr.even td {background:#e5ecf9;}
-tr.odd td {background:#eaeaea;}
+/* tr:nth-child(even) td, tr.even td {background:#e5ecf9;} */
+/* tr.odd td {background:#eaeaea;} */
 
 
 div.floating-menu {

@@ -58,14 +58,14 @@ $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
 
 //set some language-dependent strings
-$pdf->setLanguageArray($l);
+// $pdf->setLanguageArray($l);
 
 // ---------------------------------------------------------
 
 // set font
 $pdf->SetFont('dejavusans', '');
 
-$pdf->SetFontSize(8, TRUE);
+$pdf->SetFontSize(6, TRUE);
 
 
 foreach($pages as $page){
@@ -73,6 +73,7 @@ foreach($pages as $page){
 	// add a page
 	$pdf->AddPage();
 
+	// dump($page);
 	// output the HTML content
 	$pdf->writeHTML($page, true, false, true, false, '');
 

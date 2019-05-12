@@ -43,18 +43,23 @@ if(admin_configured()){
     if($admin->check_logged_in()){
 
 		$f = 0;
+		$file_errors = 0;
 		$dataset = array();
 		$analyzed = array();
 		foreach(bfglob(XML_DIR, '*.xml', NULL, 10) as $file){
 		// Διαβάζει ένα-ένα τα αρχεία xml που υπάρχουν στο φάκελο 'XML_DIR'
 		// και οργανώνει τα οικονομικά στοιχεία ανα ΑΦΜ (μισθοδοτούμενο) στον πίνακα $dataset
-			xml_extract($file);	
-			$filepath_array = explode('/', $file);
-			$filename = end($filepath_array);
-			$filename_with_time = $filename . '_' . filemtime($file);
-			$analyzed[$filename_with_time] = time();
-			echo 'Φορτώθηκε και αναλύθηκε το αρχείο ' . mb_convert_encoding($file, 'UTF-8', 'ISO-8859-7') . '<br />';
-			$f++;
+			$success = xml_extract($file);	
+			if($success){
+				$filepath_array = explode('/', $file);
+				$filename = end($filepath_array);
+				$filename_with_time = $filename . '_' . filemtime($file);
+				$analyzed[$filename_with_time] = time();
+				echo 'Φορτώθηκε και αναλύθηκε το αρχείο ' . mb_convert_encoding($file, 'UTF-8', 'ISO-8859-7') . '<br />';
+				$f++;
+			}else{
+				$file_errors++;
+			}
 		}
 
 		save_file(APP_DIR . '/scanned_files.php', $analyzed);
@@ -62,7 +67,8 @@ if(admin_configured()){
 		if($f == 0){
 			echo '<h3>Δεν βρέθηκε κανένα έγκυρο αρχείο XML. Παρακαλούμε διαβάστε την τεκμηρίωση: <a href="http://dide.arg.sch.gr/grmixan/misthodosia-online-app/">http://dide.arg.sch.gr/grmixan/misthodosia-online-app/</a></h3>';
 		}else{
-			echo '<br />Αναλύθηκαν <strong>' . $f . '</strong> αρχεία XML. ';
+			echo '<br />Αναλύθηκαν <strong>' . $f . '</strong> αρχεία XML.';
+			if($file_errors > 0) echo '<div class="error">Απέτυχε η φόρτωση <strong>' . $file_errors . '</strong> '. (($file_errors > 1) ? 'αρχείων' : 'αρχείου') .' XML.</div><br>';
 		}
 
 
@@ -111,136 +117,142 @@ function xml_extract($file){
 	global $changed_afm, $pliromes, $dataset, $months, $first, $second, $codes, $unknown_codes;
 	
 	$xmlstr = file_get_contents($file);
-	$xml = new SimpleXMLElement($xmlstr); // Διαβάζει το xml αρχείο σε μορφή αντικειμένου (συνάρτηση ενσωματωμένη στην PHP).
+	libxml_use_internal_errors(true);
+	$xml = simplexml_load_string($xmlstr); // Διαβάζει το xml αρχείο σε μορφή αντικειμένου (συνάρτηση ενσωματωμένη στην PHP).
+	if ($xml === false) {
+        display_xml_error_message($file);
+        display_xml_errors();
+		return false;
+    }else{
+		$period = $xml->header->transaction->period;
+		//$period['month'] = str_replace('0', '', $period['month']); // Remove leading zero from months - This was bugged, it would also remove zero from October (10)
+		$period['month'] = ltrim($period['month'], '0'); // Remove leading zero from months
+		if($period['month'] < 10) $period['month'] = '0'.$period['month']; // Pad month numbers with zero
+		// The 2 lines above ensure compatibility with both ex. '04' and '4' as month in the xml
 
-	$period = $xml->header->transaction->period;
-	//$period['month'] = str_replace('0', '', $period['month']); // Remove leading zero from months - This was bugged, it would also remove zero from October (10)
-	$period['month'] = ltrim($period['month'], '0'); // Remove leading zero from months
-	if($period['month'] < 10) $period['month'] = '0'.$period['month']; // Pad month numbers with zero
-	// The 2 lines above ensure compatibility with both ex. '04' and '4' as month in the xml
-
-	// Απαραίτητο για να μπορούμε να ταξινομήσουμε σωστά το επίδομα άδειας σε σχέση με τις άλλες μισθοδοτικές περιόδους
-	// ********* Ίσως θα πρέπει να προστεθεί κάτι παρόμοιο για δώρο Πάσχα/Χριστουγέννων ********* 
-	if($period['month'] == 14){
-		$period['month'] = '065';
-		$m = '07';
-	}elseif($period['month'] == 13){
-		$period['month'] = '045';
-		$m = '05';
-	}else{
-		$m = $period['month'];
-	}	
-	
-	$month = (string) $period['month'];
-	$year = (string) $period['year'];	
-	$month_str = $months[$month];
-	
-	$date_test = strtotime('01-'.$m.'-'.$year); // Δημιουργία timestamp για τη μισθοδοτική περίοδο
-
-	// Δημιουργία μοναδικού αλφαρηθμιτικού που χρησιμεύει ως αναγνωριστικό περιόδου μισθοδοσίας και ταξινομείται σωστά χρονολογικά
-	$period_str = $period['year'] . '_' . $period['month'] . '_' . $xml->header->transaction->periodType['value'];
-
-
-	foreach($xml->body->organizations->organization as $org){
-		// Για κάθε οργανισμό...
+		// Απαραίτητο για να μπορούμε να ταξινομήσουμε σωστά το επίδομα άδειας σε σχέση με τις άλλες μισθοδοτικές περιόδους
+		// ********* Ίσως θα πρέπει να προστεθεί κάτι παρόμοιο για δώρο Πάσχα/Χριστουγέννων ********* 
+		if($period['month'] == 14){
+			$period['month'] = '065';
+			$m = '07';
+		}elseif($period['month'] == 13){
+			$period['month'] = '045';
+			$m = '05';
+		}else{
+			$m = $period['month'];
+		}	
 		
-		foreach($org->employees->employee as $employee){
-		// Για κάθε εργαζόμενο που υπάρχει στον οργανισμό...
+		$month = (string) $period['month'];
+		$year = (string) $period['year'];	
+		$month_str = $months[$month];
+		
+		$date_test = strtotime('01-'.$m.'-'.$year); // Δημιουργία timestamp για τη μισθοδοτική περίοδο
+
+		// Δημιουργία μοναδικού αλφαρηθμιτικού που χρησιμεύει ως αναγνωριστικό περιόδου μισθοδοσίας και ταξινομείται σωστά χρονολογικά
+		$period_str = $period['year'] . '_' . $period['month'] . '_' . $xml->header->transaction->periodType['value'];
+
+
+		foreach($xml->body->organizations->organization as $org){
+			// Για κάθε οργανισμό...
 			
-			$pliromes = array();
+			foreach($org->employees->employee as $employee){
+			// Για κάθε εργαζόμενο που υπάρχει στον οργανισμό...
+				
+				$pliromes = array();
 
-			$afm = ''.$employee->identification->tin;
-			$amm = ''.$employee->identification->amm;
-			$rank = ''.$employee->identification->scale->rank;
-			$mk = ''.$employee->identification->scale->mk; //dump($mk);
-			$category = ''.$employee->identification->category['value'];
-			$user = $employee->identification;		
+				$afm = ''.$employee->identification->tin;
+				$amm = ''.$employee->identification->amm;
+				$rank = ''.$employee->identification->scale->rank;
+				$mk = ''.$employee->identification->scale->mk; //dump($mk);
+				$category = ''.$employee->identification->category['value'];
+				$user = $employee->identification;		
 
-			if(array_key_exists($afm, $changed_afm)) {
-			// Αν το ΑΦΜ υπάρχει στον πίνακα των ΑΦΜ που έχουν αλλάξει (config.inc.php)...
-				$afm = $changed_afm[$afm]; // Τότε ορίζουμε το ΑΦΜ στο πιο πρόσφατο
-			// Με αυτό τον τρόπο τα σοιχεία του μισθοδοτούμενου θα ενοποιηθούν κάτω από ΕΝΑ ΑΦΜ (το πιο πρόσφατο) και όχι δύο.
-			}	
+				if(array_key_exists($afm, $changed_afm)) {
+				// Αν το ΑΦΜ υπάρχει στον πίνακα των ΑΦΜ που έχουν αλλάξει (config.inc.php)...
+					$afm = $changed_afm[$afm]; // Τότε ορίζουμε το ΑΦΜ στο πιο πρόσφατο
+				// Με αυτό τον τρόπο τα σοιχεία του μισθοδοτούμενου θα ενοποιηθούν κάτω από ΕΝΑ ΑΦΜ (το πιο πρόσφατο) και όχι δύο.
+				}	
 
-			$update = FALSE;
-			// Αν η τρέχουσα περίοδος είναι πιο πρόσφατη από την καταχωρημένη για αυτό τον μισθοδοτούμενο,
-			// τότε και μόνο τότε ενημέρωσε τα προσωπικά του στοιχεία
-
-			if(!isset($dataset[$afm]) ||  $date_test > $dataset[$afm]['personal_info']['date']){
-				$update = TRUE;	
-			}else{
 				$update = FALSE;
-			}
+				// Αν η τρέχουσα περίοδος είναι πιο πρόσφατη από την καταχωρημένη για αυτό τον μισθοδοτούμενο,
+				// τότε και μόνο τότε ενημέρωσε τα προσωπικά του στοιχεία
+
+				if(!isset($dataset[$afm]) ||  $date_test > $dataset[$afm]['personal_info']['date']){
+					$update = TRUE;	
+				}else{
+					$update = FALSE;
+				}
+				
+				// Με αυτό τον τρόπο αποθηκεύονται μόνο τα προσωπικά στοιχεία της πιο πρόσφατης περιόδου.
+				// Σημαντικό αν π.χ. έχει διορθωθεί ο ΑΜ του μισθοδοτούμενου.
+
+				$a = 0;
+				$anadromika = 0;	
+				$days = '';
+				$first = $second = 0;
 			
-			// Με αυτό τον τρόπο αποθηκεύονται μόνο τα προσωπικά στοιχεία της πιο πρόσφατης περιόδου.
-			// Σημαντικό αν π.χ. έχει διορθωθεί ο ΑΜ του μισθοδοτούμενου.
+				foreach($employee->payment as $payment){
+					// Για κάθε καταχώρηση πληρωμής του εργαζόμενου
 
-			$a = 0;
-			$anadromika = 0;	
-			$days = '';
-			$first = $second = 0;
-		
-			foreach($employee->payment as $payment){
-				// Για κάθε καταχώρηση πληρωμής του εργαζόμενου
+					foreach ($payment->income as $income) {
+						$income_type = (string) $income['type'];	
+						
+						if(!isset($pliromes[$income_type])){
+							$pliromes[$income_type] = array(
+															'kratiseis' => array('desc' => '', 'data'=> array()),
+															'epidomata' => array('desc' => '', 'data' => array()),
+															'prostheta' => array()
+														);				
+						}	
+						
+						analyze_data($income, $income_type);
+					}
 
-				foreach ($payment->income as $income) {
-					$income_type = (string) $income['type'];	
-					
-					if(!isset($pliromes[$income_type])){
-						$pliromes[$income_type] = array(
-														'kratiseis' => array('desc' => '', 'data'=> array()),
-														'epidomata' => array('desc' => '', 'data' => array()),
-														'prostheta' => array()
-													);				
-					}	
-					
-					analyze_data($income, $income_type);
+					$first += (float) trim($payment->netAmount1['value']);
+					$second += (float) trim($payment->netAmount2['value']);	
+								
+					$a++;			
+				
+				} // ΤΕΛΟΣ "Για κάθε πληρωμή του μισθοδοτούμενου"
+				
+				if($update){
+					// Ανανέωσε τα προσωπικά δεδομένα μόνο αν είναι νεότερα (βλέπε τον ορισμό της $update)
+					$dataset[$afm]['personal_info'] = array(
+																'firstname' => ''.$user->firstName,
+																'lastname' => ''.$user->lastName, 
+																'amm' => ''.$amm,
+																'afm' => ''.$afm,
+																'iban' => ''.$user->bankAccount['iban'],
+																'mk' => $mk,
+																'date' => $date_test
+															);
 				}
 
-				$first += (float) trim($payment->netAmount1['value']);
-				$second += (float) trim($payment->netAmount2['value']);	
-							
-				$a++;			
-			
-			} // ΤΕΛΟΣ "Για κάθε πληρωμή του μισθοδοτούμενου"
-			
-			if($update){
-				// Ανανέωσε τα προσωπικά δεδομένα μόνο αν είναι νεότερα (βλέπε τον ορισμό της $update)
-				$dataset[$afm]['personal_info'] = array(
-															'firstname' => ''.$user->firstName,
-															'lastname' => ''.$user->lastName, 
-															'amm' => ''.$amm,
-															'afm' => ''.$afm,
-															'iban' => ''.$user->bankAccount['iban'],
-															'mk' => $mk,
-															'date' => $date_test
-														);
-			}
+				// Πρόσθεσε τα οικονομικά δεδομένα της περιόδου
+				$dataset[$afm][$period_str] = array(
+														'month' => $month,
+														'month_str' => $month_str, // Λεκτική περιγραφή περιόδου
+														'year' => $year, // Έτος μισθοδοτικής περιόδου (σώπα!)
+														'firsthalf' => $first, // Α δεκαπενθήμερο
+														'secondhalf' => $second, // Β δεκαπενθήμερο
+														'days' => $days, // Λεκτική περιγραφή αναδρομικών				
+														'analysis' => $pliromes, // Αναλυτικά οι κρατήσεις και τα επιδόματα
+														'rank' => $rank, // Βαθμός και κατηγορία εκπαίδευσης - ν. 4024/2011
+														'mk' => $mk, // ΜΚ ν. 4354/2015
+														'category' => $category
+													);
 
-			// Πρόσθεσε τα οικονομικά δεδομένα της περιόδου
-			$dataset[$afm][$period_str] = array(
-													'month' => $month,
-													'month_str' => $month_str, // Λεκτική περιγραφή περιόδου
-													'year' => $year, // Έτος μισθοδοτικής περιόδου (σώπα!)
-													'firsthalf' => $first, // Α δεκαπενθήμερο
-													'secondhalf' => $second, // Β δεκαπενθήμερο
-													'days' => $days, // Λεκτική περιγραφή αναδρομικών				
-													'analysis' => $pliromes, // Αναλυτικά οι κρατήσεις και τα επιδόματα
-													'rank' => $rank, // Βαθμός και κατηγορία εκπαίδευσης - ν. 4024/2011
-													'mk' => $mk, // ΜΚ ν. 4354/2015
-													'category' => $category
-												);
+				// dump($dataset[$afm][$period_str]); die();
+				
+			} // Τέλος "Για κάθε εργαζόμενο"
 
-			// dump($dataset[$afm][$period_str]); die();
-			
-		 } // Τέλος "Για κάθε εργαζόμενο"
+		}// Τέλος "Για κάθε οργανισμό"
 
-	}// Τέλος "Για κάθε οργανισμό"
-
-		// Απελευθέρωση μνήμης
-		unset($xml); 
-		unset($xmlstr);
-
+			// Απελευθέρωση μνήμης
+			unset($xml); 
+			unset($xmlstr);
+		return true;
+	}
 } // Τέλος συνάρτησης xml_extract
 
 
@@ -274,12 +286,15 @@ function analyze_data($income, $income_type){
 	foreach($income->et as $et){
 		$code = '';
 		$code = (string) trim($et['code']);	
-			
+		$ale_kae = 	(string) trim($et['kae']);
+		// dump($et);
+		
 		if(array_key_exists($code, $pliromes[$income_type]['kratiseis']['data'])){
-			$pliromes[$income_type]['kratiseis']['data'][$code]['amount_erg'] += (float) trim($et['amount']);						
+			$pliromes[$income_type]['kratiseis']['data'][$code]['amount_erg'] += (float) trim($et['amount']);		
+			$pliromes[$income_type]['kratiseis']['data'][$code]['ale_kae'] = $ale_kae;		
 		}else {							
 			$amount = (float) trim($et['amount']);
-			$pliromes[$income_type]['kratiseis']['data'][$code] = array('desc' => $code, 'amount_asf' => 0, 'amount_erg' => $amount);
+			$pliromes[$income_type]['kratiseis']['data'][$code] = array('desc' => $code, 'amount_asf' => 0, 'amount_erg' => $amount, 'ale_kae' => $ale_kae);
 			//die('erg-'.$code);
 		}
 	}

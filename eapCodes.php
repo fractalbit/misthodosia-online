@@ -27,23 +27,23 @@ $codes = array(	'kratiseis' => array(
 						'desc' => 'Εισφ. Ασφαλισμένου - Δάνεια',
 						'data' => array(
 							'4008300' => array('desc' => 'Δάνειο Ταχυδρομικού', 'amount_asf' => 0, 'amount_erg' => 0),
-							'4013605' => array('desc' => 'ΤΠΔΥ 1%', 'amount_asf' => 0, 'amount_erg' => 0),
+							'4013605' => array('desc' => 'Τ.Π.Δ.Υ. 1%', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4051700' => array('desc' => 'ΟΑΕΔ 1%', 'amount_asf' => 0, 'amount_erg' => 0),
 							'3082800' => array('desc' => 'Αλληλεγγύης 2%', 'amount_asf' => 0, 'amount_erg' => 0),
 							'3082400' => array('desc' => 'Υπερ Σύνταξης', 'amount_asf' => 0, 'amount_erg' => 0),
 							'3081100' => array('desc' => 'Υγειον. Περίθαλψη', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4052000' => array('desc' => 'Υγειον. Περίθαλψη', 'amount_asf' => 0, 'amount_erg' => 0),
-							'4013601' => array('desc' => 'ΤΠΔΥ', 'amount_asf' => 0, 'amount_erg' => 0),
+							'4013601' => array('desc' => 'Τ.Π.Δ.Υ.', 'amount_asf' => 0, 'amount_erg' => 0),
 							'3011300' => array('desc' => 'Φόρος', 'amount_asf' => 0, 'amount_erg' => 0),
 							'3089100' => array('desc' => 'Ειδική εισφορά αλληλεγγυης Ν.3986 Αρ.29 Παρ. 4', 'amount_asf' => 0, 'amount_erg' => 0),
-							'4003101' => array('desc' => 'ΜΠΤΥ', 'amount_asf' => 0, 'amount_erg' => 0),
-							'4003103' => array('desc' => 'ΜΠΤΥ Νεοδιόριστου', 'amount_asf' => 0, 'amount_erg' => 0),
+							'4003101' => array('desc' => 'Μ.Τ.Π.Υ.', 'amount_asf' => 0, 'amount_erg' => 0),
+							'4003103' => array('desc' => 'Μ.Τ.Π.Υ. Νεοδιόριστου', 'amount_asf' => 0, 'amount_erg' => 0),
 							'3324300' => array('desc' => 'Απεργία', 'amount_asf' => 0, 'amount_erg' => 0),
 							'3324100' => array('desc' => 'Επιστροφές αποδοχών', 'amount_asf' => 0, 'amount_erg' => 0),
 							'3122800' => array('desc' => 'Πρόσθετο ποσοστό 20% στα τέλη χαρτοσήμου', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4003108' => array('desc' => 'Μετοχικό Ταμείο Πολιτικών Υπαλλήλων (82985)', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4003107' => array('desc' => 'Μ.Τ.Π.Υ. Πρόσθετες Αμοιβές', 'amount_asf' => 0, 'amount_erg' => 0),
-							'4012504' => array('desc' => 'ΤΕΑΔΥ Πρόσθετες Αμοιβές', 'amount_asf' => 0, 'amount_erg' => 0),
+							'4012504' => array('desc' => 'Τ.Ε.Α.Δ.Υ. Πρόσθετες Αμοιβές', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4009600' => array('desc' => 'ΤΑΠΙΤ (πρώην Τ.Α.Ξ.Υ)', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4033500' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. κύρια σύνταξη', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4033701' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. ειδική προσαύξηση', 'amount_asf' => 0, 'amount_erg' => 0),
@@ -52,8 +52,8 @@ $codes = array(	'kratiseis' => array(
 							'4033900' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. εφάπαξ παροχών', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4034000' => array('desc' => 'Τ.Σ.Μ.Ε.Δ.Ε. υγεία τεχνικών', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4002100' => array('desc' => 'ΙΚΑ', 'amount_asf' => 0, 'amount_erg' => 0),
-							'4012501' => array('desc' => 'ΤΕΑΔΥ', 'amount_asf' => 0, 'amount_erg' => 0),
-							'4012502' => array('desc' => 'ΤΕΑΔΥ Νεοδιόριστου', 'amount_asf' => 0, 'amount_erg' => 0),
+							'4012501' => array('desc' => 'Τ.Ε.Α.Δ.Υ.', 'amount_asf' => 0, 'amount_erg' => 0),
+							'4012502' => array('desc' => 'Τ.Ε.Α.Δ.Υ. Νεοδιόριστου', 'amount_asf' => 0, 'amount_erg' => 0),
 
 
 							'4012505' => array('desc' => 'Τ.Ε.Α.Δ.Υ - Διαφορά Αποδοχών λόγω Μισθολογικής προαγωγής', 'amount_asf' => 0, 'amount_erg' => 0),
@@ -79,8 +79,8 @@ $codes = array(	'kratiseis' => array(
 							'4014700' => array('desc' => 'Τ.Υ.Δ.Κ.Υ', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4038701' => array('desc' => 'Τ.Ε.Α.Δ.Υ. – Τ.Α.Δ.Κ.Υ. Κύρια Σύνταξη', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4038702' => array('desc' => 'Τ.Ε.Α.Δ.Υ. – Τ.Α.Δ.Κ.Υ. Επικουρική', 'amount_asf' => 0, 'amount_erg' => 0),
-							'4038803' => array('desc' => 'ΤΠΔΥ – ΤΠΔΚΥ (Κράτηση πρόνοιας 1% όλων των παλαιών ασφαλισμένων)', 'amount_asf' => 0, 'amount_erg' => 0),
-							'4038808' => array('desc' => 'ΤΠΔΥ - ΤΠΔΚΥ (Ειδική εισφορά 1% Ν.3986/2011)', 'amount_asf' => 0, 'amount_erg' => 0),
+							'4038803' => array('desc' => 'Τ.Π.Δ.Υ. – ΤΠΔΚΥ (Κράτηση πρόνοιας 1% όλων των παλαιών ασφαλισμένων)', 'amount_asf' => 0, 'amount_erg' => 0),
+							'4038808' => array('desc' => 'Τ.Π.Δ.Υ. - ΤΠΔΚΥ (Ειδική εισφορά 1% Ν.3986/2011)', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4014201' => array('desc' => 'Ε.Τ.Α.Α. (Τομέας Σύνταξης Υγεινομικών)', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4014202' => array('desc' => 'Ε.Τ.Α.Α. Τομέας Υγείας Υγεινομικών', 'amount_asf' => 0, 'amount_erg' => 0),
 							'4014204' => array('desc' => 'Ε.Τ.Α.Α. Στέγη Υγεινομικών', 'amount_asf' => 0, 'amount_erg' => 0),
@@ -101,7 +101,7 @@ $codes = array(	'kratiseis' => array(
 						'desc' => 'Ακαθάριστες αποδοχές',
 						'data' => array(
 							'0217'	  => array('desc' => 'Κίνητρο απόδοσης', 'amount' => 0),
-							'0211'	  => array('desc' => 'Βασικός', 'amount' => 0),
+							'0211'	  => array('desc' => 'Βασικός μισθός', 'amount' => 0),
 							'0221'	  => array('desc' => 'Υπερβάλλουσα διαφορά', 'amount' => 0),
 							'0218'	  => array('desc' => 'Δώρο', 'amount' => 0),
 							'0219'	  => array('desc' => 'Μεταπτυχιακό/Διδακτ.', 'amount' => 0),
@@ -111,7 +111,13 @@ $codes = array(	'kratiseis' => array(
 							'0228'	  => array('desc' => 'Επίδομα Περιοχής', 'amount' => 0),
 							'0229'	  => array('desc' => 'Επ. Διδ. Προετοιμασίας', 'amount' => 0),
 							'0344'	  => array('desc' => 'Ακαθάριστες αποδοχές', 'amount' => 0),
-							'2130104001'	  => array('desc' => 'Ακαθάριστες αποδοχές', 'amount' => 0)
+
+							'2130104001'	  => array('desc' => 'Ακαθάριστες αποδοχές', 'amount' => 0), // Για αναπληρωτές
+							'2120101001'	  => array('desc' => 'Βασικός μισθός', 'amount' => 0),
+							'2120103001'	  => array('desc' => 'Υπερβάλλουσα διαφορά', 'amount' => 0),
+							'2120104001'	  => array('desc' => 'Επίδομα θέσης', 'amount' => 0),
+							'2120102001'	  => array('desc' => 'Οικογενειακή παροχή', 'amount' => 0),
+							'2120115001'	  => array('desc' => 'Επίδομα Περιοχής', 'amount' => 0)
 						)
 
 				),

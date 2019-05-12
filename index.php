@@ -82,7 +82,10 @@ if(isset($_POST['proccess']) || isset($_GET['afm'])){
 						if($key != 'personal_info'){
 							ob_start();									
 
-							echo get_html($key, $data);
+                            // echo get_html($data);
+                            // dump($data);
+                            $current = new misthodosia($data);
+                            $current->ektiposi();
 
 							$pages[] = ob_get_contents();
 							ob_end_clean();
@@ -173,198 +176,267 @@ function mo_print_float_menu($periods){
 	echo '</div>';
 }
 
-
-
-function get_html($key, $user){
-    global $name, $codes, $ranks;
-
-    ob_start();
-
-    $analysis = $user['analysis'];
-
-    $shown = FALSE;
-    //echo '<pre>'.print_r($user).'</pre>';
-
-    $style = '
-        <style>
-            .compare {
-                border-collapse: collapse;
-            }
-
-            .compare td {
-                border: 1px solid #666;
-                text-align: right;
-            }
-
-            .totals td {
-                border: 1px solid #666;
-                text-align: center;
-            }
-
-            .special, .special * {
-                font-weight: bold;
-            }
-        
-        </style>
-    ';          
-
-    $rank = isset($user['rank']) ? $user['rank'] : '';
-    $mk = isset($user['mk']) ? $user['mk'] : '';
-    // dump($user);
-    //dump($rank);
-    //dump($ranks);
-    $category = $user['category'];  
-    if(!empty($rank)) $ranktxt = ' / Βαθμός: ' . $category . ' - ' .$ranks[$rank]; else $ranktxt = '';
-    if(!empty($mk)) $ranktxt = ' / Κατηγορία: ' . $category . ' / ΜΚ ν. 4354/2015: ' . $mk;
-
-    echo $style;    
-    $tw = 640;              
-   // echo '<a name="period'.$user['month'] . '-' . $user['year'].'"></a>';
-    echo '<a name="period'.$user['month'] . '-' . $user['year'].'"></a>';
-    echo '<div style="display: block; width: '.$tw.'px; vertical-align: top; margin-bottom: 25px;">     
-    <h3>'.$name.$ranktxt.'</h3>
-    <h4>Περίοδος Μισθοδοσίας: '.$user['month_str'] . ' ' . $user['year'] .'</h4>';
-    $kratiseis = $akatharistes = 0;
-
-    $w1 = 340;
-    $w2 = 125;
-    $w3 = ($w1-$w2) / 3;    
-
-    $total_asf = $total_erg = $total_akatharistes = $total_entelomeno = 0;
-    $syn_asf = $syn_erg = $akatharistes = 0;
+Class misthodosia {
+    private $raw_data;
+    private $user = array('name' => '', 'ranktxt' => '');
     
-    foreach ($analysis as $income_type => $income) {
-        echo '<br />Τύπος Μισθοδοσίας: '. get_type($income_type) . '<br />';    
+    // private $total_asf = 0, $total_erg = 0, $total_akatharistes = 0, $total_entelomeno = 0, $syn_asf = 0, $syn_erg = 0, $akatharistes = 0, $syn_erg_only = 0;
+    private $sinolo = array('asf' => 0, 'erg' => 0, 'apodoxon' => 0, 'dapanis' => 0); // Για όλο το μήνα αθροιστικά
+    private $meriko_sinolo = array('asf' => 0, 'erg' => 0, 'apodoxon' => 0, 'dapanis' => 0); // Για κάθε τύπο μισθοδοσίας μέσα στο μήνα (π.χ. Τακτική ή αναδρομική)
 
-        echo '<table cellpadding="0" cellspacintg="0" width="100%">
-        <tr><td valign="top" style="width: '.$w1.'px; vertical-align: top;">';  
-        
-            
-            // Κρατήσεις ασφαλισμένου
-            $key = 'kratiseis';     
+    // private $income, $income_type;
 
-            echo '<table class="compare" cellpadding="5" cellspacing="0">
-                <tr><td style="text-align: center; width: '.$w2.'px;"><b>Εισφορές</b></td><td style="width: '.$w3.'px;">Ασφαλ.</td><td style="width: '.$w3.'px;">Εργοδ.</td><td style="width: '.$w3.'px;">Σύνολο</td></tr>';
-            foreach($income[$key]['data'] as $code_id => $data){
-                $asf = $data['amount_asf'];
-                $erg = $data['amount_erg'];
-                $synolo = $asf + $erg;
-
-                $asf != 0 ? $print_asf = sprintf('%01.2f €', $asf) : $print_asf = '';
-                $erg != 0 ? $print_erg = sprintf('%01.2f €', $erg) : $print_erg = '';
-                $synolo != 0 ? $print_synolo = sprintf('%01.2f €', $synolo) : $print_synolo = '';
-
-                if($asf !=0 || $erg != 0){
-                    echo '  <tr>
-                                <td style="width: '.$w2.'px;">'. get_code($code_id, $codes, $income, $key) . '</td>
-                                <td style="width: '.$w3.'px;">'.$print_asf.'</td>
-                                <td style="width: '.$w3.'px;">'.$print_erg.'</td>
-                                <td style="width: '.$w3.'px;">'.$print_synolo.'</td>
-                            </tr>
-                         '; 
-                    $syn_asf += $asf;
-                    $syn_erg += $erg;
-                }                               
-            }
-            // Γραμμή συνόλων
-            echo '<tr class="subtle"><td style="width: '.$w2.'px;">Σύνολα</td>
-                                    <td style="width: '.$w3.'px;">' . sprintf('%01.2f €', $syn_asf) . '</td>
-                                    <td style="width: '.$w3.'px;">' . sprintf('%01.2f €', $syn_erg) . '</td>
-                                    <td style="width: '.$w3.'px;">' . sprintf('%01.2f €', $syn_asf+$syn_erg) . '</td>
-
-                </tr>'; 
-            echo '</table>';
-
-        echo '</td>';
-
-        
-
-
-        $lw = $tw - $w1;
-        $lw1 = 200;
-        $lw2 = $lw - $lw1;
-        echo '<td valign="top" style="width: 210px; vertical-align: top;">';
-
-        // Ακαθάριστες αποδοχές (Βασικός + επιδόματα)
-        $key = 'epidomata';     
-
-        echo '<div style="margin-bottom: 25px;">';
-        echo '<table class="compare" cellpadding="5" cellspacing="0">';
-        echo '<tr><td colspan="2" style="text-align: center; width: '.$lw.'px;"><b>'.$codes[$key]['desc'].'</b></td></tr>';
-        foreach($income[$key]['data'] as $code_id => $data){
-            $children = '';
-            if($data['amount'] != 0){
-                
-                if($code_id == '0213') $children = get_children($data['amount']);
-                
-                echo '<tr><td style="width: '.$lw1.'px;">'. get_code($code_id, $codes, $income, $key) . $children . '</td><td style="width: '.$lw2.'px;">' . sprintf('%01.2f €', $data['amount']) . '</td></tr>';       
-                $akatharistes += $data['amount'];
-            }                                                       
-        }
-        echo '<tr class="subtle"><td style="width: '.$lw1.'px;">Σύνολο</td><td style="width: '.$lw2.'px;">' . sprintf('%01.2f €', $akatharistes) . '</td></tr>';    
-
-        echo '</table></div>';
-
-        /*
-
-        
-        // Εντελόμενο = Ακαθάριστες αποδοχές + Εργοδοτικές εισφορές
-        echo '<div style="margin-bottom: 25px;">';
-        echo '<table class="compare" cellpadding="5" cellspacing="0">';     
-        echo '<tr class="subtle"><td style="width: '.$lw1.'px;">Εντελόμενο</td><td style="width: '.$lw2.'px;">' . sprintf('%01.2f €', $akatharistes+$syn_erg) . '</td></tr>';
-        echo '</table></div>';
-
-*/
-
-
-        echo '</td></tr></table>';
-
-        $total_asf += $syn_asf;
-        $total_erg += $syn_erg;
-        $total_akatharistes += $akatharistes;
-        $total_entelomeno += ($akatharistes + $syn_erg);
-
-        $syn_asf = $syn_erg = $akatharistes = 0;
-
-
+    public function __construct($raw){
+        $this->raw_data = $raw; 
+        $this->user['name'] = $GLOBALS['name'];        
     }
 
-    echo '</div>';
+    public function ektiposi(){
 
-    $pw1 = $tw / 8;
-    echo '<div style="margin-top: 25px; margin-bottom: 30px;">';
-    echo '
-    <table class="totals" cellpadding="5" cellspacing="0" style="width: '.$tw.'px;">
-    <tr>
-        <td style="width: '.$pw1.'px;" class="subtle">Σύνολο Αποδοχών</td>
-        <td style="width: '.$pw1.'px;" class="subtle">Σύνολο Δαπάνης</td>
-        <td style="width: '.$pw1.'px;" class="subtle">Εισφορές Ασφαλ.</td>
-        <td style="width: '.$pw1.'px;" class="subtle">Εισφορές Εργοδότη</td>
-        <td style="width: '.$pw1.'px;" class="subtle">Εισφορές Σύνολο</td>
-        <td style="width: '.$pw1.'px;" class="special">Πληρωτέο Μηνός</td>
-        <td style="width: '.$pw1.'px;" class="special">Α\' Δεκαπενθ.</td>
-        <td style="width: '.$pw1.'px;" class="special">Β\' Δεκαπενθ.</td>
-    </tr>
-        <tr>
-        <td style="width: '.$pw1.'px;" class="subtle">'.sprintf('%01.2f €', $total_akatharistes).'</td>
-        <td style="width: '.$pw1.'px;" class="subtle">'.sprintf('%01.2f €', $total_entelomeno).'</td>
-        <td style="width: '.$pw1.'px;" class="subtle">'.sprintf('%01.2f €', $total_asf).'</td>
-        <td style="width: '.$pw1.'px;" class="subtle">'.sprintf('%01.2f €', $total_erg).'</td>
-        <td style="width: '.$pw1.'px;" class="subtle">'.sprintf('%01.2f €', $total_asf+$total_erg).'</td>
-        <td style="width: '.$pw1.'px;" class="special">'.sprintf('%01.2f €', $user['firsthalf']+$user['secondhalf']).'</td>
-        <td style="width: '.$pw1.'px;" class="special">'.sprintf('%01.2f €', $user['firsthalf']).'</td>
-        <td style="width: '.$pw1.'px;" class="special">'.sprintf('%01.2f €', $user['secondhalf']).'</td>
-    </tr>
+        $this->print_header();
 
+        foreach ($this->raw_data['analysis'] as $income_type => $income) {
+            echo '<table style="width: 100%; margin-bottom: 10px;" cellpadding="8"><tr><td style="border: 1px solid #ccc; padding: 8px; text-align: left; color: #666; font-style: italic">Τύπος Μισθοδοσίας: '. get_type($income_type) . '</td></tr></table>';          
+            $this->pdf_margin(3);
+            $this->meriki_ektiposi($income, $income_type);
+            $this->pdf_margin(8);
+        }
 
-    </table>';
-    echo '</div>';
+        $this->print_totals();
+        
+    }
 
+    private function pdf_margin($lines = 2){
+        // This is a trick because tcpdf seems to ignore margins
+        for($i=1; $i <= $lines; $i++){
+            echo '<br style="display: none;" />';
+        }
+    }
 
-    $html = ob_get_contents();
-    ob_end_clean(); 
+    private function print_header(){
+        $data = $this->raw_data;
+        $style = '
+            <style>
+                .compare {
+                    border-collapse: collapse;
+                    width: 100%;
+                }
 
-    return $html;
+                table.compare tr, table.compare td {
+                    background: none;
+                }
+
+                .compare td {
+                    border: 1px solid #666;
+                    text-align: right;
+                }
+
+                .totals td {
+                    border: 1px solid #666;
+                    text-align: center;
+                }
+
+                .special, .special * {
+                    font-weight: bold;
+                }
+
+                .special {
+                    background: #e5ecf9 !important;
+                }
+            
+            </style>
+        ';          
+
+        echo $style;
+
+        $rank = isset($data['rank']) ? $data['rank'] : '';
+        $mk = isset($data['mk']) ? $data['mk'] : '';
+        $category = isset($data['category']) ? $data['category'] : '';         
+        if(!empty($rank)) $this->user['ranktxt'] = ' / Βαθμός: ' . $category . ' - ' .$GLOBALS['ranks'][$rank]; else $this->user['ranktxt'] = '';
+        if(!empty($mk)) $this->user['ranktxt'] = ' / Κατηγορία: ' . $category . ' / ΜΚ ν. 4354/2015: ' . $mk;
+
+        echo '<a name="period'.$data['month'] . '-' . $data['year'].'"></a>';
+        echo '
+            <div style="font-size: 14px; font-weight: bold; margin: 10px 0;">'.$this->user['name'].$this->user['ranktxt'].'</div>
+            <div style="font-size: 13px; font-weight: bold; margin-bottom: 20px">Περίοδος Μισθοδοσίας: '.$data['month_str'] . ' ' . $data['year'] .'</div> 
+        ';
+        
+        $this->pdf_margin(6);
+    }
+
+    private function print_totals(){               
+        echo '
+            <div style="margin-top: 25px; margin-bottom: 30px;">      
+                <table style="width: 100%">
+                    <tr><td colspan="2" cellpadding="5" style="text-align: center; font-size: 14px; padding: 5px; font-weight: bold">'.$this->raw_data['month_str'] . ' ' . $this->raw_data['year'] .' - Σύνολα περιόδου μισθοδοσίας</td></tr>
+                    <tr style="background: none;">
+                        <td style="vertical-align: top; padding-right: 20px; width: 45%">', $this->sinolo_dapanis() , '</td>
+                        <td style="vertical-align: top; width: 55%;">', $this->pliroteo_mina() , '</td>
+                    </tr>
+                </table>         
+                
+            </div>
+        ';
+    }
+
+    private function pliroteo_mina(){
+        echo '
+        <table class="compare" cellpadding="5" cellspacing="0">
+            <tr>                    
+                <td class="special">Πληρωτέο Μήνα</td>
+                <td class="special">'.sprintf('%01.2f €', $this->raw_data['firsthalf']+$this->raw_data['secondhalf']).'</td>
+            </tr>
+            <tr>
+                <td>Α\' Δεκαπενθ.</td>
+                <td>'.sprintf('%01.2f €', $this->raw_data['firsthalf']).'</td>                    
+            </tr>
+            <tr>
+                <td>Β\' Δεκαπενθ.</td>
+                <td>'.sprintf('%01.2f €', $this->raw_data['secondhalf']).'</td>
+            </tr>    
+        </table>
+        ';
+    }
+
+    private function sinolo_dapanis(){
+        echo '
+        <table class="compare" cellpadding="5" cellspacing="0">
+            <tr>                    
+                <td class="special" style="width: 75%">Σύνολο Ακαθάριστων αποδοχών</td>
+                <td class="special" style="width: 25%">'.sprintf('%01.2f €', $this->sinolo['apodoxon']).'</td>
+            </tr>
+            <tr>
+                <td>Εργοδοτικές εισφορές</td>
+                <td>'.sprintf('%01.2f €', $this->sinolo['erg']).'</td>                    
+            </tr>
+            <tr>
+                <td>Σύνολο δαπάνης</td>
+                <td>'.sprintf('%01.2f €', $this->sinolo['dapanis']).'</td>
+            </tr>  
+            <tr>
+                <td>Εισφορές ασφαλισμένου</td>
+                <td>'.sprintf('%01.2f €', $this->sinolo['asf']).'</td>
+            </tr>      
+        </table>
+        ';
+    }
+
+    private function meriki_ektiposi($income, $income_type){
+        echo '
+            <table style="width: 100%; margin-bottom: 40px;">
+                <tr>
+                    <td style="vertical-align: top; width: 45%; padding-right: 20px;">', $this->ektiposi_apodoxon($income, $income_type) ,'</td>
+                    <td style="vertical-align: top; width: 55%;">', $this->ektiposi_kratiseon($income, $income_type) ,'</td>
+                </tr>
+            </table>
+        ';
+    }
+
+    private function ektiposi_apodoxon($income, $income_type){
+        
+        $this->meriko_sinolo['apodoxon'] = $this->meriko_sinolo['erg'] = 0;
+
+        $percents = array(22, 58, 20);
+
+        echo '<table class="compare" cellpadding="5" cellspacing="0" style="width: 100%; border-collapse: collapse; border: 1px solid #666">';
+        echo '<tr><td colspan="3" class="special" style="text-align: center; font-weight: bold">Αποδοχές & Εργοδ. Εισφορές</td></tr>';
+        echo '<tr class="special"><td style="text-align: center; width: '.$percents[0].'%">ΑΛΕ</td><td style="width: '.$percents[1].'%">Περιγραφή</td><td style="width: '.$percents[2].'%">Ποσό</td></tr>';
+        
+        
+        $key = 'epidomata';
+        foreach($income[$key]['data'] as $code_id => $epidomata){
+            $children = '';
+            if($epidomata['amount'] != 0){
+                
+                if($code_id == '0213') $children = get_children($epidomata['amount']);
+                
+                echo '<tr><td style="white-space: nowrap">'.$code_id.'</td><td>'. get_code($code_id, $GLOBALS['codes'], $income, $key) . $children . '</td><td style="white-space: nowrap">' . sprintf('%01.2f €', $epidomata['amount']) . '</td></tr>';       
+                $this->meriko_sinolo['apodoxon'] += $epidomata['amount'];
+            }                                                       
+        }
+        echo '<tr><td colspan="3" class="special">Σύνολο αποδοχών: ' . sprintf('%01.2f €', $this->meriko_sinolo['apodoxon']) . '</td></tr>';    
+       
+       
+        $key = 'kratiseis'; 
+        foreach($income[$key]['data'] as $code_id => $kratiseis){
+            $erg = $kratiseis['amount_erg'];
+            // dump($kratiseis);
+            $code = array_key_exists('ale_kae', $kratiseis) ? $kratiseis['ale_kae'] : $code_id;
+            
+            $erg != 0 ? $print_erg = sprintf('%01.2f €', $erg) : $print_erg = '';
+
+            if($erg != 0){
+                echo '  <tr>
+                            <td>'.$code.'</td>
+                            <td>'. get_code($code_id, $GLOBALS['codes'], $income, $key) . ' Εργοδ.</td>
+                            <td>'.$print_erg.'</td>
+                        </tr>
+                        '; 
+                 $this->meriko_sinolo['erg'] += $erg;
+            }                               
+        }
+        $this->meriko_sinolo['dapanis'] = $this->meriko_sinolo['apodoxon'] + $this->meriko_sinolo['erg'];
+        echo '<tr><td colspan="3" class="special">Σύνολο αποδοχών & Εργοδ. Εισφορών: ' . sprintf('%01.2f €', $this->meriko_sinolo['dapanis']) . '</td></tr>'; 
+        echo '</table>';
+
+        $this->sinolo['apodoxon'] += $this->meriko_sinolo['apodoxon'];
+        $this->sinolo['erg'] += $this->meriko_sinolo['erg'];
+        $this->sinolo['dapanis'] += $this->meriko_sinolo['dapanis'];
+    }
+
+    private function ektiposi_kratiseon($income, $income_type){
+        $this->meriko_sinolo['asf'] = $this->meriko_sinolo['erg'] = 0;
+
+        $key = 'kratiseis';    
+        $percents = array(15, 55, 15, 15);
+        
+           
+        echo '<table class="compare" cellpadding="5" cellspacing="0" style="width: 100%">
+            <tr><td colspan="4"  class="special" style="text-align: center;">Κρατήσεις & φόροι</td></tr>
+            <tr class="special"><td style="text-align: center; width: '.$percents[0].'%">Κωδικός</td><td style="width: '.$percents[1].'%">Περιγραφή</td>
+            <td style="width: '.$percents[2].'%">Ποσό Ασφαλ.</td><td style=" width:'.$percents[3].'%">Ποσό Εργοδ.</td></tr>';
+        foreach($income[$key]['data'] as $code_id => $kratiseis){
+            $asf = $kratiseis['amount_asf'];
+            $erg = $kratiseis['amount_erg'];
+            $synolo = $asf + $erg;
+
+            $asf != 0 ? $print_asf = sprintf('%01.2f €', $asf) : $print_asf = '-';
+            $erg != 0 ? $print_erg = sprintf('%01.2f €', $erg) : $print_erg = '-';
+            $synolo != 0 ? $print_synolo = sprintf('%01.2f €', $synolo) : $print_synolo = '';
+
+            if($asf !=0 || $erg != 0){
+                echo '  <tr>
+                            <td>'.$code_id.'</td>
+                            <td>'. get_code($code_id, $GLOBALS['codes'], $income, $key) . '</td>
+                            <td style="white-space: nowrap">'.$print_asf.'</td>
+                            <td style="white-space: nowrap">'.$print_erg.'</td>
+                        </tr>
+                    '; 
+                $this->meriko_sinolo['asf'] += $asf;
+                $this->meriko_sinolo['erg'] += $erg;
+            }                               
+        }
+        // Γραμμή συνόλων
+        echo '
+            <tr class="special"><td colspan="2" style="text-align: right">Σύνολα Κρατήσεων: </td>
+                <td>' . sprintf('%01.2f €', $this->meriko_sinolo['asf']) . '</td>
+                <td>' . sprintf('%01.2f €', $this->meriko_sinolo['erg']) . '</td>
+            </tr>
+        '; 
+            
+        $pliroteo = $this->meriko_sinolo['apodoxon'] - $this->meriko_sinolo['asf'];
+            
+        echo '
+            <tr class="special"><td colspan="2" style="text-align: right">Πληρωτέο: </td>
+            <td colspan="2" style="text-align: center">' . sprintf('%01.2f €', $pliroteo) . '</td>
+            </tr>
+        '; 
+        echo '</table>';
+            
+        $this->sinolo['asf'] += $this->meriko_sinolo['asf'];
+        // $this->sinolo['erg'] += $this->meriko_sinolo['erg']; // this has already been calculated from ektiposi_apodoxon()
+    }
+
 }
 
 
