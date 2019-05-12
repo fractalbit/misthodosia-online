@@ -196,7 +196,7 @@ Class misthodosia {
         $this->print_header();
 
         foreach ($this->raw_data['analysis'] as $income_type => $income) {
-            echo '<table style="width: 100%; margin-bottom: 10px;" cellpadding="8"><tr><td style="border: 1px solid #ccc; padding: 8px; text-align: left; color: #666; font-style: italic">Τύπος Μισθοδοσίας: '. get_type($income_type) . '</td></tr></table>';          
+            echo '<table style="width: 100%; margin-bottom: 10px;" cellpadding="8"><tr><td style="border: 1px solid #ccc; padding: 8px; text-align: left; color: #666; font-style: italic">Τύπος Μισθοδοσίας: '. $this->get_type($income_type) . '</td></tr></table>';          
             $this->pdf_margin(3);
             $this->meriki_ektiposi($income, $income_type);
             $this->pdf_margin(8);
@@ -220,10 +220,6 @@ Class misthodosia {
                 .compare {
                     border-collapse: collapse;
                     width: 100%;
-                }
-
-                table.compare tr, table.compare td {
-                    background: none;
                 }
 
                 .compare td {
@@ -348,9 +344,9 @@ Class misthodosia {
             $children = '';
             if($epidomata['amount'] != 0){
                 
-                if($code_id == '0213') $children = get_children($epidomata['amount']);
+                if($code_id == '0213' || $code_id == '2120102001') $children = $this->guess_children($epidomata['amount']);
                 
-                echo '<tr><td style="white-space: nowrap">'.$code_id.'</td><td>'. get_code($code_id, $GLOBALS['codes'], $income, $key) . $children . '</td><td style="white-space: nowrap">' . sprintf('%01.2f €', $epidomata['amount']) . '</td></tr>';       
+                echo '<tr><td style="white-space: nowrap">'.$code_id.'</td><td>'. $this->get_description($code_id, $GLOBALS['codes'], $key) . $children . '</td><td style="white-space: nowrap">' . sprintf('%01.2f €', $epidomata['amount']) . '</td></tr>';       
                 $this->meriko_sinolo['apodoxon'] += $epidomata['amount'];
             }                                                       
         }
@@ -368,7 +364,7 @@ Class misthodosia {
             if($erg != 0){
                 echo '  <tr>
                             <td>'.$code.'</td>
-                            <td>'. get_code($code_id, $GLOBALS['codes'], $income, $key) . ' Εργοδ.</td>
+                            <td>'. $this->get_description($code_id, $GLOBALS['codes'], $key) . ' Εργοδ.</td>
                             <td>'.$print_erg.'</td>
                         </tr>
                         '; 
@@ -407,7 +403,7 @@ Class misthodosia {
             if($asf !=0 || $erg != 0){
                 echo '  <tr>
                             <td>'.$code_id.'</td>
-                            <td>'. get_code($code_id, $GLOBALS['codes'], $income, $key) . '</td>
+                            <td>'. $this->get_description($code_id, $GLOBALS['codes'], $key) . '</td>
                             <td style="white-space: nowrap">'.$print_asf.'</td>
                             <td style="white-space: nowrap">'.$print_erg.'</td>
                         </tr>
@@ -437,64 +433,61 @@ Class misthodosia {
         // $this->sinolo['erg'] += $this->meriko_sinolo['erg']; // this has already been calculated from ektiposi_apodoxon()
     }
 
-}
-
-
-function get_type($income_type){
-    if($income_type == '0'){
-        $type = 'Τακτική';
-    }elseif($income_type == '1'){
-        $type = 'Αναδρομική';
-    }else{
-        $type = $income_type;
-    }
-
-    return $type;
-}
-
-
-function get_code($code_id, $codes, $analysis, $key){
-    
-    if(array_key_exists($code_id, $codes[$key]['data'])){
-        $code = $codes[$key]['data'][$code_id]['desc'];
-    }else{
-        $code = $analysis[$key]['data'][$code_id]['desc'];      
-    }
-
-    return $code;
-}
-
-function get_children($amount){
-
-    $children = '';
-
-    if($amount == 50){
-        $children = '1 τέκνο';
-    }elseif($amount == 70){
-        $children = '2 τέκνα';
-    }elseif($amount == 120){
-        $children = '3 τέκνα';
-    }elseif($amount == 170){
-        $children = '4 τέκνα';
-    }else{
-        $tekna = 0;
-        $diafora = $amount - 170;
-        for($i=1; $i<=20; $i++){
-            $poso = $i * 70;            
-            if($diafora == $poso){
-                $tekna = 4 + $i;            
-            }
+    private function get_type($income_type){
+        if($income_type == '0'){
+            $type = 'Τακτική';
+        }elseif($income_type == '1'){
+            $type = 'Αναδρομική';
+        }else{
+            $type = $income_type;
         }
-        
-        if($tekna > 0) $children = $tekna . ' τέκνα';
+    
+        return $type;
     }
-
-    if(!empty($children)){
-        return ' (' . $children . ')';  
-    }else{
-        return '';
+    
+    
+    private function get_description($code_id, $codes, $key){        
+        if(array_key_exists($code_id, $codes[$key]['data'])){
+            return $codes[$key]['data'][$code_id]['desc'];
+        }else{
+            return $code_id;
+        }
+    }
+    
+    private function guess_children($amount){
+    
+        $children = '';
+    
+        if($amount == 50){
+            $children = '1 τέκνο';
+        }elseif($amount == 70){
+            $children = '2 τέκνα';
+        }elseif($amount == 120){
+            $children = '3 τέκνα';
+        }elseif($amount == 170){
+            $children = '4 τέκνα';
+        }else{
+            $tekna = 0;
+            $diafora = $amount - 170;
+            for($i=1; $i<=20; $i++){
+                $poso = $i * 70;            
+                if($diafora == $poso){
+                    $tekna = 4 + $i;            
+                }
+            }
+            
+            if($tekna > 0) $children = $tekna . ' τέκνα';
+        }
+    
+        if(!empty($children)){
+            return ' (' . $children . ')';  
+        }else{
+            return '';
+        }
     }
 }
+
+
 
 
 function message($title, $content, $type = 'information'){
