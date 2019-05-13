@@ -357,3 +357,26 @@ ul.pws_tabs_controll {
 	padding-top: 5px;
 }
 
+
+.compare {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+.compare td {
+	border: 1px solid #666;
+	text-align: right;
+}
+
+.totals td {
+	border: 1px solid #666;
+	text-align: center;
+}
+
+.special, .special * {
+	font-weight: bold;
+}
+
+.special {
+	background: #e5ecf9 !important;
+}

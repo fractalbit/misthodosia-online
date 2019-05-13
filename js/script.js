@@ -10,9 +10,13 @@ $(function () {
 			if (!confirm(message)) return;
 		}
 
+		var periodId = $('#pdf-period').val();
+		// console.log(periodId);
+
 		$.ajax({
 			url: "generate-pdf.php",
 			dataType: "html",
+			data: { pid: periodId },
 			success: function (msg) {
 				$('#generating').fadeOut(200);
 				$('#pdf-complete').fadeIn(400);

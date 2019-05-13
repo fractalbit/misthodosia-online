@@ -73,7 +73,8 @@ if(isset($_POST['proccess']) || isset($_GET['afm'])){
 					// -> ΤΟΤΕ δείξε τη μισθοδοσία τους.
 					
                     fSession::set('name', $name);
-					$pages = array();
+                    $pages = array();
+                    $select_values = array();
 
 					mo_print_float_menu($periods);
 
@@ -90,11 +91,22 @@ if(isset($_POST['proccess']) || isset($_GET['afm'])){
 							$pages[] = ob_get_contents();
 							ob_end_clean();
 						};
-					}
+                    }
+                    
+                    function print_pdf_select_menu(){
+                        echo '<select id="pdf-period" style="margin-right: 10px;">';
+                        echo '<option value="all">Όλες οι μισθοδοσίες</option>';
+                        foreach($GLOBALS['select_values'] as $i => $period){
+                            ($i == 0) ? $selected = ' selected="selected"' : $selected = '';
+                            echo '<option value="'.$i.'"'.$selected.'>'.$period.'</option>';
+                        }
+                        echo '</select>';
+                    }
 
 					if(defined('TC_PDF_LIB_DIR') && file_exists(TC_PDF_LIB_DIR . '/tcpdf.php')){
 						//$link_file = ORG_URL . '/' . current_dir() . '/' . USER_DIR . '/' . $afm . '_' . $salt . '.pdf';
                         $link_file = trailingslashit(ORG_URL) . trailingslashit(current_dir()) . trailingslashit(USER_DIR) .  $afm . '_' . $salt . '.pdf';
+                        print_pdf_select_menu();
 						echo '<a href="" id="gen-pdf" class="button">Δημιουργία PDF ></a><div id="pdf-msg" style="display: inline-block; margin: 0 20px;"><span id="generating" style="
 						display: none;"><img src="img/loader.gif" style="position: relative; top: 6px; margin-right: 20px;" /></span><a id="pdf-complete" href="'.$link_file.'" target="_blank" class="button download" style="display: none">Αποθήκευση όλων σε pdf</a></div>';
 						fSession::set('pages', $pages);						
@@ -183,7 +195,7 @@ Class misthodosia {
     // private $total_asf = 0, $total_erg = 0, $total_akatharistes = 0, $total_entelomeno = 0, $syn_asf = 0, $syn_erg = 0, $akatharistes = 0, $syn_erg_only = 0;
     private $sinolo = array('asf' => 0, 'erg' => 0, 'apodoxon' => 0, 'dapanis' => 0); // Για όλο το μήνα αθροιστικά
     private $meriko_sinolo = array('asf' => 0, 'erg' => 0, 'apodoxon' => 0, 'dapanis' => 0); // Για κάθε τύπο μισθοδοσίας μέσα στο μήνα (π.χ. Τακτική ή αναδρομική)
-
+    
     // private $income, $income_type;
 
     public function __construct($raw){
@@ -196,7 +208,7 @@ Class misthodosia {
         $this->print_header();
 
         foreach ($this->raw_data['analysis'] as $income_type => $income) {
-            echo '<table style="width: 100%; margin-bottom: 10px;" cellpadding="8"><tr><td style="border: 1px solid #ccc; padding: 8px; text-align: left; color: #666; font-style: italic">Τύπος Μισθοδοσίας: '. $this->get_type($income_type) . '</td></tr></table>';          
+            echo '<div style="margin-bottom: 5px; border: 1px solid #ccc; padding: 5px; text-align: left; color: #666; font-style: italic">Τύπος Μισθοδοσίας: '. $this->get_type($income_type) . '</div>';          
             $this->pdf_margin(3);
             $this->meriki_ektiposi($income, $income_type);
             $this->pdf_margin(8);
@@ -208,42 +220,15 @@ Class misthodosia {
 
     private function pdf_margin($lines = 2){
         // This is a trick because tcpdf seems to ignore margins
-        for($i=1; $i <= $lines; $i++){
-            echo '<br style="display: none;" />';
-        }
+        // for($i=1; $i <= $lines; $i++){
+        //     echo '<br style="display: none;" />';
+        // }
+
+        // this function is useless with dompdf
     }
 
     private function print_header(){
         $data = $this->raw_data;
-        $style = '
-            <style>
-                .compare {
-                    border-collapse: collapse;
-                    width: 100%;
-                }
-
-                .compare td {
-                    border: 1px solid #666;
-                    text-align: right;
-                }
-
-                .totals td {
-                    border: 1px solid #666;
-                    text-align: center;
-                }
-
-                .special, .special * {
-                    font-weight: bold;
-                }
-
-                .special {
-                    background: #e5ecf9 !important;
-                }
-            
-            </style>
-        ';          
-
-        echo $style;
 
         $rank = isset($data['rank']) ? $data['rank'] : '';
         $mk = isset($data['mk']) ? $data['mk'] : '';
@@ -253,20 +238,22 @@ Class misthodosia {
 
         echo '<a name="period'.$data['month'] . '-' . $data['year'].'"></a>';
         echo '
-            <div style="font-size: 14px; font-weight: bold; margin: 10px 0;">'.$this->user['name'].$this->user['ranktxt'].'</div>
-            <div style="font-size: 13px; font-weight: bold; margin-bottom: 20px">Περίοδος Μισθοδοσίας: '.$data['month_str'] . ' ' . $data['year'] .'</div> 
+            <h3>'.$this->user['name'].$this->user['ranktxt'].'</h3>
+            <h4>Περίοδος Μισθοδοσίας: '.$data['month_str'] . ' ' . $data['year'] .'</h4> 
         ';
         
+        $GLOBALS['select_values'][] = $data['month_str'] . ' ' . $data['year']; // This is needed for the print_pdf_select_menu functions
+
         $this->pdf_margin(6);
     }
 
     private function print_totals(){               
         echo '
-            <div style="margin-top: 25px; margin-bottom: 30px;">      
+            <div style="margin-top: 15px; margin-bottom: 20px;">      
                 <table style="width: 100%">
                     <tr><td colspan="2" cellpadding="5" style="text-align: center; font-size: 14px; padding: 5px; font-weight: bold">'.$this->raw_data['month_str'] . ' ' . $this->raw_data['year'] .' - Σύνολα περιόδου μισθοδοσίας</td></tr>
                     <tr style="background: none;">
-                        <td style="vertical-align: top; padding-right: 20px; width: 45%">', $this->sinolo_dapanis() , '</td>
+                        <td style="vertical-align: top; padding-right: 10px; width: 45%">', $this->sinolo_dapanis() , '</td>
                         <td style="vertical-align: top; width: 55%;">', $this->pliroteo_mina() , '</td>
                     </tr>
                 </table>         
@@ -319,9 +306,9 @@ Class misthodosia {
 
     private function meriki_ektiposi($income, $income_type){
         echo '
-            <table style="width: 100%; margin-bottom: 40px;">
+            <table style="width: 100%; margin-bottom: 20px;">
                 <tr>
-                    <td style="vertical-align: top; width: 45%; padding-right: 20px;">', $this->ektiposi_apodoxon($income, $income_type) ,'</td>
+                    <td style="vertical-align: top; width: 45%; padding-right: 10px;">', $this->ektiposi_apodoxon($income, $income_type) ,'</td>
                     <td style="vertical-align: top; width: 55%;">', $this->ektiposi_kratiseon($income, $income_type) ,'</td>
                 </tr>
             </table>
