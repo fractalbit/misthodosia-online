@@ -59,14 +59,14 @@ a.button:hover {
 a.download {
 	background-image: url(../img/icon_set_bg.png);
 	background-repeat: no-repeat;
-	background-position: 10px 8px;
+	background-position: 10px 6px;
 	padding-left: 40px;
 }
 
 a.download:hover {
 	background-image: url(../img/icon_set_bg.png);
 	background-repeat: no-repeat;
-	background-position: 10px 8px;
+	background-position: 10px 6px;
 	padding-left: 40px;
 }
 

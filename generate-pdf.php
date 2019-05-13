@@ -4,6 +4,9 @@
 // Το αρχείο αυτό δημιουργεί ένα .pdf με όλα τα οικονομικά στοιχεία του μισθοδοτούμενου
 /* *********** ΤΕΛΟΣ ΓΕΝΙΚΗΣ ΠΕΡΙΓΡΑΦΗΣ *********** */
 
+ini_set('memory_limit', '516M'); // ευχαριστώ το "ΤΜΗΜΑ ΜΗΧΑΝΟΓΡΑΦΗΣΗΣ ΔΙΠΕ ΚΑΡΔΙΤΣΑΣ" - mixanografisi@dipe.kar.sch.gr
+ini_set('max_execution_time', 180); // = 3 minutes
+
 include_once('./init.inc.php');
 
 // Require dompdf, libraries, and helper functions

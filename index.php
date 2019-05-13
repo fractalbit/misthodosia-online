@@ -92,23 +92,14 @@ if(isset($_POST['proccess']) || isset($_GET['afm'])){
 							ob_end_clean();
 						};
                     }
-                    
-                    function print_pdf_select_menu(){
-                        echo '<select id="pdf-period" style="margin-right: 10px;">';
-                        echo '<option value="all">Όλες οι μισθοδοσίες</option>';
-                        foreach($GLOBALS['select_values'] as $i => $period){
-                            ($i == 0) ? $selected = ' selected="selected"' : $selected = '';
-                            echo '<option value="'.$i.'"'.$selected.'>'.$period.'</option>';
-                        }
-                        echo '</select>';
-                    }
 
-					if(defined('TC_PDF_LIB_DIR') && file_exists(TC_PDF_LIB_DIR . '/tcpdf.php')){
+                    $allow_pdf = TRUE; // Maybe turn this into a setting?
+					if($allow_pdf){
 						//$link_file = ORG_URL . '/' . current_dir() . '/' . USER_DIR . '/' . $afm . '_' . $salt . '.pdf';
                         $link_file = trailingslashit(ORG_URL) . trailingslashit(current_dir()) . trailingslashit(USER_DIR) .  $afm . '_' . $salt . '.pdf';
                         print_pdf_select_menu();
 						echo '<a href="" id="gen-pdf" class="button">Δημιουργία PDF ></a><div id="pdf-msg" style="display: inline-block; margin: 0 20px;"><span id="generating" style="
-						display: none;"><img src="img/loader.gif" style="position: relative; top: 6px; margin-right: 20px;" /></span><a id="pdf-complete" href="'.$link_file.'" target="_blank" class="button download" style="display: none">Αποθήκευση όλων σε pdf</a></div>';
+						display: none;"><img src="img/loader.gif" style="position: relative; top: 6px; margin-right: 20px;" /></span><a id="pdf-complete" href="'.$link_file.'" target="_blank" class="button download" style="display: none">Εμφάνιση/λήψη του pdf</a></div>';
 						fSession::set('pages', $pages);						
 						
 						//echo '<textarea id="pdf-data" style="display:none;">'.serialize($pages).'</textarea>';
@@ -203,30 +194,6 @@ Class misthodosia {
         $this->user['name'] = $GLOBALS['name'];        
     }
 
-    public function ektiposi(){
-
-        $this->print_header();
-
-        foreach ($this->raw_data['analysis'] as $income_type => $income) {
-            echo '<div style="margin-bottom: 5px; border: 1px solid #ccc; padding: 5px; text-align: left; color: #666; font-style: italic">Τύπος Μισθοδοσίας: '. $this->get_type($income_type) . '</div>';          
-            $this->pdf_margin(3);
-            $this->meriki_ektiposi($income, $income_type);
-            $this->pdf_margin(8);
-        }
-
-        $this->print_totals();
-        
-    }
-
-    private function pdf_margin($lines = 2){
-        // This is a trick because tcpdf seems to ignore margins
-        // for($i=1; $i <= $lines; $i++){
-        //     echo '<br style="display: none;" />';
-        // }
-
-        // this function is useless with dompdf
-    }
-
     private function print_header(){
         $data = $this->raw_data;
 
@@ -242,67 +209,22 @@ Class misthodosia {
             <h4>Περίοδος Μισθοδοσίας: '.$data['month_str'] . ' ' . $data['year'] .'</h4> 
         ';
         
-        $GLOBALS['select_values'][] = $data['month_str'] . ' ' . $data['year']; // This is needed for the print_pdf_select_menu functions
+        $GLOBALS['select_values'][] = $data['month_str'] . ' ' . $data['year']; // This is needed for the print_pdf_select_menu function
+    }    
 
-        $this->pdf_margin(6);
-    }
+    public function ektiposi(){
 
-    private function print_totals(){               
-        echo '
-            <div style="margin-top: 15px; margin-bottom: 20px;">      
-                <table style="width: 100%">
-                    <tr><td colspan="2" cellpadding="5" style="text-align: center; font-size: 14px; padding: 5px; font-weight: bold">'.$this->raw_data['month_str'] . ' ' . $this->raw_data['year'] .' - Σύνολα περιόδου μισθοδοσίας</td></tr>
-                    <tr style="background: none;">
-                        <td style="vertical-align: top; padding-right: 10px; width: 45%">', $this->sinolo_dapanis() , '</td>
-                        <td style="vertical-align: top; width: 55%;">', $this->pliroteo_mina() , '</td>
-                    </tr>
-                </table>         
-                
-            </div>
-        ';
-    }
+        $this->print_header();
 
-    private function pliroteo_mina(){
-        echo '
-        <table class="compare" cellpadding="5" cellspacing="0">
-            <tr>                    
-                <td class="special">Πληρωτέο Μήνα</td>
-                <td class="special">'.sprintf('%01.2f €', $this->raw_data['firsthalf']+$this->raw_data['secondhalf']).'</td>
-            </tr>
-            <tr>
-                <td>Α\' Δεκαπενθ.</td>
-                <td>'.sprintf('%01.2f €', $this->raw_data['firsthalf']).'</td>                    
-            </tr>
-            <tr>
-                <td>Β\' Δεκαπενθ.</td>
-                <td>'.sprintf('%01.2f €', $this->raw_data['secondhalf']).'</td>
-            </tr>    
-        </table>
-        ';
-    }
+        foreach ($this->raw_data['analysis'] as $income_type => $income) {
+            echo '<div style="margin-bottom: 5px; border: 1px solid #ccc; padding: 5px; text-align: left; color: #666; font-style: italic">Τύπος Μισθοδοσίας: '. $this->get_type($income_type) . '</div>';          
 
-    private function sinolo_dapanis(){
-        echo '
-        <table class="compare" cellpadding="5" cellspacing="0">
-            <tr>                    
-                <td class="special" style="width: 75%">Σύνολο Ακαθάριστων αποδοχών</td>
-                <td class="special" style="width: 25%">'.sprintf('%01.2f €', $this->sinolo['apodoxon']).'</td>
-            </tr>
-            <tr>
-                <td>Εργοδοτικές εισφορές</td>
-                <td>'.sprintf('%01.2f €', $this->sinolo['erg']).'</td>                    
-            </tr>
-            <tr>
-                <td>Σύνολο δαπάνης</td>
-                <td>'.sprintf('%01.2f €', $this->sinolo['dapanis']).'</td>
-            </tr>  
-            <tr>
-                <td>Εισφορές ασφαλισμένου</td>
-                <td>'.sprintf('%01.2f €', $this->sinolo['asf']).'</td>
-            </tr>      
-        </table>
-        ';
-    }
+            $this->meriki_ektiposi($income, $income_type);
+        }
+
+        $this->print_totals();
+        
+    }    
 
     private function meriki_ektiposi($income, $income_type){
         echo '
@@ -420,6 +342,63 @@ Class misthodosia {
         // $this->sinolo['erg'] += $this->meriko_sinolo['erg']; // this has already been calculated from ektiposi_apodoxon()
     }
 
+    private function print_totals(){               
+        echo '
+            <div style="margin-top: 15px; margin-bottom: 20px;">      
+                <table style="width: 100%">
+                    <tr><td colspan="2" cellpadding="5" style="text-align: center; font-size: 14px; padding: 5px; font-weight: bold">'.$this->raw_data['month_str'] . ' ' . $this->raw_data['year'] .' - Σύνολα περιόδου μισθοδοσίας</td></tr>
+                    <tr style="background: none;">
+                        <td style="vertical-align: top; padding-right: 10px; width: 45%">', $this->sinolo_dapanis() , '</td>
+                        <td style="vertical-align: top; width: 55%;">', $this->pliroteo_mina() , '</td>
+                    </tr>
+                </table>         
+                
+            </div>
+        ';
+    }
+
+    private function sinolo_dapanis(){
+        echo '
+        <table class="compare" cellpadding="5" cellspacing="0">
+            <tr>                    
+                <td class="special" style="width: 75%">Σύνολο Ακαθάριστων αποδοχών</td>
+                <td class="special" style="width: 25%">'.sprintf('%01.2f €', $this->sinolo['apodoxon']).'</td>
+            </tr>
+            <tr>
+                <td>Εργοδοτικές εισφορές</td>
+                <td>'.sprintf('%01.2f €', $this->sinolo['erg']).'</td>                    
+            </tr>
+            <tr>
+                <td>Σύνολο δαπάνης</td>
+                <td>'.sprintf('%01.2f €', $this->sinolo['dapanis']).'</td>
+            </tr>  
+            <tr>
+                <td>Εισφορές ασφαλισμένου</td>
+                <td>'.sprintf('%01.2f €', $this->sinolo['asf']).'</td>
+            </tr>      
+        </table>
+        ';
+    }
+
+    private function pliroteo_mina(){
+        echo '
+        <table class="compare" cellpadding="5" cellspacing="0">
+            <tr>                    
+                <td class="special">Πληρωτέο Μήνα</td>
+                <td class="special">'.sprintf('%01.2f €', $this->raw_data['firsthalf']+$this->raw_data['secondhalf']).'</td>
+            </tr>
+            <tr>
+                <td>Α\' Δεκαπενθ.</td>
+                <td>'.sprintf('%01.2f €', $this->raw_data['firsthalf']).'</td>                    
+            </tr>
+            <tr>
+                <td>Β\' Δεκαπενθ.</td>
+                <td>'.sprintf('%01.2f €', $this->raw_data['secondhalf']).'</td>
+            </tr>    
+        </table>
+        ';
+    }    
+
     private function get_type($income_type){
         if($income_type == '0'){
             $type = 'Τακτική';
@@ -513,4 +492,14 @@ function clean_up($limit = CLEAN_UP_AFTER){
 		//echo $dif . '<hr/>';
 		if($dif > $limit) unlink($file);
 	}
+}
+
+function print_pdf_select_menu(){
+    echo '<select id="pdf-period" style="margin-right: 10px;">';
+    // echo '<option value="all">Όλες οι μισθοδοσίες</option>';
+    foreach($GLOBALS['select_values'] as $i => $period){
+        ($i == 0) ? $selected = ' selected="selected"' : $selected = '';
+        echo '<option value="'.$i.'"'.$selected.'>'.$period.'</option>';
+    }
+    echo '</select>';
 }

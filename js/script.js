@@ -4,6 +4,7 @@ $(function () {
 	$('#gen-pdf').click(function (event) {
 		event.preventDefault();
 		$('#generating').fadeIn(400);
+		$('#pdf-complete').hide();
 
 		if ($(this).hasClass('confirm')) {
 			var message = $(this).attr('rel');
@@ -11,6 +12,7 @@ $(function () {
 		}
 
 		var periodId = $('#pdf-period').val();
+		var periodTxt = $('#pdf-period option:selected').text();
 		// console.log(periodId);
 
 		$.ajax({
@@ -18,10 +20,10 @@ $(function () {
 			dataType: "html",
 			data: { pid: periodId },
 			success: function (msg) {
-				$('#generating').fadeOut(200);
+				$('#generating').hide();
+				$('#pdf-complete').text(periodTxt);
 				$('#pdf-complete').fadeIn(400);
 				if (msg != '') alert(msg);
-				// location.reload();
 			}
 		});
 
