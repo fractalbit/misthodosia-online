@@ -5,81 +5,109 @@
 /* *********** ΤΕΛΟΣ ΓΕΝΙΚΗΣ ΠΕΡΙΓΡΑΦΗΣ *********** */
 
 include_once('./init.inc.php');
-/*if(file_exists(TC_PDF_LIB_DIR . '/config/tcpdf_config.php')){
-	require_once(TC_PDF_LIB_DIR . '/config/tcpdf_config.php');	
-}elseif(file_exists(TC_PDF_LIB_DIR . '/config/lang/eng.php')){
-	require_once(TC_PDF_LIB_DIR . '/config/lang/eng.php');	
-}else{
-	die('Δεν βρέθηκε το αρχείο ρυθμίσεων για τη βιβλιοθήκη tcpdf');
-}*/
 
-require_once(TC_PDF_LIB_DIR . '/config/tcpdf_config.php');
-require_once(TC_PDF_LIB_DIR . '/tcpdf.php');
+// Require dompdf, libraries, and helper functions
+require_once 'dompdf/lib/html5lib/Parser.php';
+require_once 'dompdf/src/Autoloader.php';
+Dompdf\Autoloader::register();
+
+// reference the Dompdf namespace
+use Dompdf\Dompdf;
 
 $afm = fSession::get('afm');
 $salt = fSession::get('salt');
 $pages = fSession::get('pages');
 $name = fSession::get('name');
 
-//$test = $afm . '_' . $salt . '.pdf';
-//dump($pages); die();
+// instantiate and use the dompdf class
+$dompdf = new Dompdf();
 
+$html_header = '
+	<!DOCTYPE html>
+	<html lang="el">
 
-// create new PDF document
-$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<title>Document</title>
 
-// set document information
-$pdf->SetCreator(PDF_CREATOR);
-$pdf->SetAuthor('misthodosia online');
-//$pdf->SetTitle('TCPDF Example 006');
-//$pdf->SetSubject('TCPDF Tutorial');
-//$pdf->SetKeywords('TCPDF, PDF, example, test, guide');
+		<style>
+			@page {
+				margin: 5px 20px;
+			}
 
-// set default header data
-//$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE.' 006', PDF_HEADER_STRING);
-$pdf->SetHeaderData('', '', ORG_URL, '');
+			* {
+				font-family: DejaVu Sans;
+				font-size: 8px;
+			}
 
-// set header and footer fonts
-$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
-$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+			.compare {
+				border-collapse: collapse;
+				width: 100%;
+			}
 
-// set default monospaced font
-$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+			.compare td {
+				border: 1px solid #666;
+				text-align: right;
+			}
 
-//set margins
-$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
-$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
-$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+			.totals td {
+				border: 1px solid #666;
+				text-align: center;
+			}
 
-//set auto page breaks
-$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+			.special, .special * {
+				font-weight: bold;
+			}
 
-//set image scale factor
-$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+			.special {
+				background: #e5ecf9 !important;
+			}
 
-//set some language-dependent strings
-// $pdf->setLanguageArray($l);
+			h3 {
+				font-size: 12px;				
+			}
+			}
 
-// ---------------------------------------------------------
+			h4 {
+				font-size: 10px;				
+			}
+		</style>
+	</head>
 
-// set font
-$pdf->SetFont('dejavusans', '');
+	<body>
+';
 
-$pdf->SetFontSize(6, TRUE);
+$html_footer = '</body></html>';
+$page_break = '<div style="page-break-after: always;"></div>';
 
+$html = $html_header;
 
-foreach($pages as $page){
-	//echo mb_detect_encoding($page); echo '<hr>';
-	// add a page
-	$pdf->AddPage();
+// $page_id = 0; // This should be changed to get the value from the ajax request
 
-	// dump($page);
-	// output the HTML content
-	$pdf->writeHTML($page, true, false, true, false, '');
-
-	// reset pointer to the last page
-	$pdf->lastPage();
+$page_id = $_GET['pid'];
+// dump($pages); die();
+if($page_id === 'all'){
+	foreach($pages as $page){		
+		$html .= $page;	
+		$html .= $page_break;	
+	}
+}else{
+	$pid = (int) $page_id;
+	$html .= $pages[$pid];
+	// $html .= $page_break;	
 }
+
+$html .= $html_footer;
+
+$html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'); // Αυτό είναι απαραίτητο για να εμφανιστούν τα ελληνικά με το dompdf
+
+$dompdf->loadHtml($html);
+
+// (Optional) Setup the paper size and orientation
+$dompdf->setPaper('A4', 'portrait');
+
 
 if(defined('ORG_URL') && strlen(ORG_URL)>0){
 	if(defined('USER_DIR') && is_dir(USER_DIR)){
@@ -92,11 +120,11 @@ if(defined('ORG_URL') && strlen(ORG_URL)>0){
 
 		$output_file = trailingslashit(dirname(__FILE__)) . trailingslashit(USER_DIR) . $afm . '_' . $salt . '.pdf';
 
-		//$link_file = trailingslashit(ORG_URL) . trailingslashit(current_dir()) . trailingslashit(USER_DIR) .  $afm . '_' . $salt . '.pdf';
-		//Close and output PDF document
-		$pdf->Output($output_file, 'F');
-		//echo '<br /><br /><a href="'.$link_file.'" target="_blank" class="button download">Αποθήκευση όλων σε pdf</a><br /><br />';
+		// Render the HTML as PDF
+		$dompdf->render();
 
+		file_put_contents($output_file, $dompdf->output());
+		
 		if(!$admin->check_logged_in()){                        
 		    $message = date('d/m/Y H:i:s', time()) . ' - Ο χρήστης ' . $name . ' δημιούργησε PDF';
 		    savelog($message, 'user_log.txt');
