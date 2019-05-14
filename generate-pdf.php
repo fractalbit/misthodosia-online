@@ -5,7 +5,7 @@
 /* *********** ΤΕΛΟΣ ΓΕΝΙΚΗΣ ΠΕΡΙΓΡΑΦΗΣ *********** */
 
 ini_set('memory_limit', '516M'); // ευχαριστώ το "ΤΜΗΜΑ ΜΗΧΑΝΟΓΡΑΦΗΣΗΣ ΔΙΠΕ ΚΑΡΔΙΤΣΑΣ" - mixanografisi@dipe.kar.sch.gr
-ini_set('max_execution_time', 180); // = 3 minutes
+// ini_set('max_execution_time', 180); // = 3 minutes
 
 include_once('./init.inc.php');
 
@@ -21,6 +21,7 @@ $afm = fSession::get('afm');
 $salt = fSession::get('salt');
 $pages = fSession::get('pages');
 $name = fSession::get('name');
+$pdf_years = fSession::get('pdf_years');
 
 // instantiate and use the dompdf class
 $dompdf = new Dompdf();
@@ -90,14 +91,16 @@ $html = $html_header;
 // $page_id = 0; // This should be changed to get the value from the ajax request
 
 $page_id = $_GET['pid'];
+$pid = (int) $page_id;
 // dump($pages); die();
-if($page_id === 'all'){
-	foreach($pages as $page){		
-		$html .= $page;	
-		$html .= $page_break;	
+if($pid > 1900){ // $pid is a year then and not a direct page id 
+	$page_ids = $pdf_years[$pid]; // This holds an array with all the page ids for that year ($pid)
+	arsort($page_ids);
+	foreach($page_ids as $cur_page){		
+		$html .= $pages[$cur_page];	
+		$html .= $page_break;		
 	}
 }else{
-	$pid = (int) $page_id;
 	$html .= $pages[$pid];
 	// $html .= $page_break;	
 }

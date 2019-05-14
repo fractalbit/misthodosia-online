@@ -75,9 +75,10 @@ if(isset($_POST['proccess']) || isset($_GET['afm'])){
                     fSession::set('name', $name);
                     $pages = array();
                     $select_values = array();
+                    $pdf_years = array();
 
 					mo_print_float_menu($periods);
-
+                    $pid = 0;
 					foreach($periods as $key => $data){
 						//echo $key . '<br />';
 						if($key != 'personal_info'){
@@ -89,7 +90,9 @@ if(isset($_POST['proccess']) || isset($_GET['afm'])){
                             $current->ektiposi();
 
 							$pages[] = ob_get_contents();
-							ob_end_clean();
+                            ob_end_clean();
+                            
+                            $pid++;
 						};
                     }
 
@@ -97,11 +100,11 @@ if(isset($_POST['proccess']) || isset($_GET['afm'])){
 					if($allow_pdf){
 						//$link_file = ORG_URL . '/' . current_dir() . '/' . USER_DIR . '/' . $afm . '_' . $salt . '.pdf';
                         $link_file = trailingslashit(ORG_URL) . trailingslashit(current_dir()) . trailingslashit(USER_DIR) .  $afm . '_' . $salt . '.pdf';
-                        print_pdf_select_menu();
+                        print_pdf_select_menu($select_values, $pdf_years);
 						echo '<a href="" id="gen-pdf" class="button">Δημιουργία PDF ></a><div id="pdf-msg" style="display: inline-block; margin: 0 20px;"><span id="generating" style="
 						display: none;"><img src="img/loader.gif" style="position: relative; top: 6px; margin-right: 20px;" /></span><a id="pdf-complete" href="'.$link_file.'" target="_blank" class="button download" style="display: none">Εμφάνιση/λήψη του pdf</a></div>';
 						fSession::set('pages', $pages);						
-						
+						fSession::set('pdf_years', $pdf_years);	
 						//echo '<textarea id="pdf-data" style="display:none;">'.serialize($pages).'</textarea>';
 						//include('makePDF.php');
 					}
@@ -195,6 +198,8 @@ Class misthodosia {
     }
 
     private function print_header(){
+        global $select_values, $pdf_years, $pid;
+
         $data = $this->raw_data;
 
         $rank = isset($data['rank']) ? $data['rank'] : '';
@@ -209,7 +214,8 @@ Class misthodosia {
             <h4>Περίοδος Μισθοδοσίας: '.$data['month_str'] . ' ' . $data['year'] .'</h4> 
         ';
         
-        $GLOBALS['select_values'][] = $data['month_str'] . ' ' . $data['year']; // This is needed for the print_pdf_select_menu function
+        $select_values[] = $data['month_str'] . ' ' . $data['year']; // This is needed for the print_pdf_select_menu function
+        $pdf_years[$data['year']][] = $pid;  
     }    
 
     public function ektiposi(){
@@ -494,10 +500,16 @@ function clean_up($limit = CLEAN_UP_AFTER){
 	}
 }
 
-function print_pdf_select_menu(){
+function print_pdf_select_menu($select_values, $pdf_years){
     echo '<select id="pdf-period" style="margin-right: 10px;">';
     // echo '<option value="all">Όλες οι μισθοδοσίες</option>';
-    foreach($GLOBALS['select_values'] as $i => $period){
+    foreach($pdf_years as $year => $arr){
+        echo '<option value="'.$year.'">Έτος '.$year.'</option>';
+    }
+
+    echo ' <option disabled>------------------------</option>';
+
+    foreach($select_values as $i => $period){
         ($i == 0) ? $selected = ' selected="selected"' : $selected = '';
         echo '<option value="'.$i.'"'.$selected.'>'.$period.'</option>';
     }
