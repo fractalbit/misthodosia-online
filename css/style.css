@@ -31,6 +31,8 @@ a.button, a:visited.button {
 	background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
 	background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
 	background-image: linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));		
+	/* background-repeat: no-repeat, repeat;
+	background-position: 10px 6px, top left; */
 	-moz-border-radius: 6px; 
 	-webkit-border-radius: 6px;
 	border-radius: 6px;
@@ -57,9 +59,12 @@ a.button:hover {
 
 
 a.download {
-	background-image: url(../img/icon_set_bg.png);
-	background-repeat: no-repeat;
-	background-position: 10px 6px;
+	background-image: url(../img/icon_set_bg.png), -moz-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+	background-image: url(../img/icon_set_bg.png), -o-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));	
+	background-image: url(../img/icon_set_bg.png), -webkit-linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+	background-image: url(../img/icon_set_bg.png), linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));	
+	background-repeat: no-repeat, repeat;
+	background-position: 10px 6px, top left;
 	padding-left: 40px;
 }
 

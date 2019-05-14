@@ -102,7 +102,7 @@ if(isset($_POST['proccess']) || isset($_GET['afm'])){
                         $link_file = trailingslashit(ORG_URL) . trailingslashit(current_dir()) . trailingslashit(USER_DIR) .  $afm . '_' . $salt . '.pdf';
                         print_pdf_select_menu($select_values, $pdf_years);
 						echo '<a href="" id="gen-pdf" class="button">Δημιουργία PDF ></a><div id="pdf-msg" style="display: inline-block; margin: 0 20px;"><span id="generating" style="
-						display: none;"><img src="img/loader.svg" height="20" style="position: relative; top: 6px; margin-right: 20px;" /></span><a id="pdf-complete" href="'.$link_file.'" target="_blank" class="button download" style="display: none">Εμφάνιση/λήψη του pdf</a></div>';
+						display: none;"><img src="img/loader-new.gif" style="position: relative; top: 6px; margin-right: 20px;" /></span><a id="pdf-complete" href="'.$link_file.'" target="_blank" class="button download" style="display: none">Εμφάνιση/λήψη του pdf</a></div>';
 						fSession::set('pages', $pages);						
 						fSession::set('pdf_years', $pdf_years);	
 						//echo '<textarea id="pdf-data" style="display:none;">'.serialize($pages).'</textarea>';
